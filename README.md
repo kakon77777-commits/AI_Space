@@ -33,7 +33,7 @@ Child project
 
 ## GitHub snapshot reconstruction
 
-Because the GitHub connector used during v0.0.3 has a practical binary payload limit, the verified GitHub artifact for v0.0.3 is a **code delta over v0.0.2**, not a second full archive.
+The verified GitHub artifact for v0.0.3 is a **code delta over v0.0.2**.
 
 To reconstruct v0.0.3 from GitHub:
 
