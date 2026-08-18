@@ -1,39 +1,59 @@
 # AI Space
 
-AI Space is developed **snapshot-first**: source is developed and verified in a local / active AI workspace, then handed off to GitHub as an immutable compressed archive.
+AI Space is developed **snapshot-first**: source is developed and verified in a local / active AI workspace, then handed off to GitHub as immutable compressed snapshots.
 
 GitHub is intentionally used as a **control and handoff plane**, not as the place where automated agents edit the whole source tree file-by-file.
 
 ## Current snapshot
 
-**AI Space Persistent Activity Shell v0.0.2**
+**AI Space v0.0.3 — Capability Adapter Contract**
 
-- Single-site React/Vite/TypeScript shell
-- Registry-driven navigation and Capability surfaces
-- External HTTP(S) resource catalog
-- Local Board reflection posts
-- Explicit Arcade game-session start / end lifecycle
-- Completed game session → Board reflection with lineage
-- Shared cross-capability Event History
-- Home `Continue` projection for active sessions
-- AI Board remains locally represented as a Capability surface; its independent project is not copied into this repository
+v0.0.3 makes the Mother/Child Capability architecture executable:
 
-Download the GitHub handoff archive from:
+- `CapabilityManifest` v0.1
+- manifest validation before registration
+- `Link / API / Native` integration modes
+- deterministic dispatch-plan generation
+- duplicate capability ID and route-collision protection
+- provider lifecycle / health metadata
+- AI Board shipped as a **declared child capability manifest only**; no live API connection is claimed
+- existing local Board / Arcade / Shared History remain functional
 
-[`snapshots/AI_Space_v0.0.2_Handoff.tar.xz`](snapshots/AI_Space_v0.0.2_Handoff.tar.xz)
+Core flow:
 
-Snapshot index and SHA-256 are recorded in [`SNAPSHOTS.md`](SNAPSHOTS.md).
+```text
+Child project
+→ capability manifest
+→ validate
+→ provider
+→ registry
+→ dispatch plan
+→ AI Space
+```
+
+## GitHub snapshot reconstruction
+
+Because the GitHub connector used during v0.0.3 has a practical binary payload limit, the verified GitHub artifact for v0.0.3 is a **code delta over v0.0.2**, not a second full archive.
+
+To reconstruct v0.0.3 from GitHub:
+
+1. Download [`snapshots/AI_Space_v0.0.2_Handoff.tar.xz`](snapshots/AI_Space_v0.0.2_Handoff.tar.xz).
+2. Extract it as the v0.0.2 base.
+3. Download [`snapshots/AI_Space_v0.0.3_CodeDelta.tar.xz`](snapshots/AI_Space_v0.0.3_CodeDelta.tar.xz).
+4. Overlay the delta files onto the v0.0.2 base.
+5. Run the networked dependency install, tests, typecheck, and Vite build before deployment.
+
+The **complete evidence-bearing v0.0.3 ZIP** is delivered separately in the development round. GitHub remains intentionally minimal.
+
+Snapshot checksums and verification notes are recorded in [`SNAPSHOTS.md`](SNAPSHOTS.md).
 
 ## Development workflow
 
 ```text
-Download latest handoff archive
-→ verify checksum
+Download latest reconstructible snapshot
+→ verify checksums
 → develop/test locally or in the active AI workspace
-→ produce a new immutable full snapshot + compact handoff archive
+→ produce a new immutable FULL snapshot
+→ publish a compact verified GitHub handoff/delta
 → update GitHub snapshot index
 ```
-
-The GitHub handoff archive is intentionally compact and contains the runnable `app/` source plus its dependency-free tests. This repository's README and snapshot index provide the handoff pointer and checksum. Full evidence bundles, architecture/reference documents, raw verification logs, and other development context are delivered separately with each development round rather than expanding the repository source tree.
-
-Before deployment, run the networked dependency install, tests, TypeScript check, and Vite production build in an environment that can reach the npm registry.
