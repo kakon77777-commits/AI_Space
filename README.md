@@ -34,6 +34,6 @@ Download latest handoff archive
 → update GitHub snapshot index
 ```
 
-The GitHub handoff archive contains the runnable source plus the minimum README/HANDOFF/SNAPSHOT metadata required for another AI or developer to continue. Full evidence bundles, reference papers, raw verification logs, and other large handoff evidence may be delivered separately with each development round rather than expanding the repository source tree.
+The GitHub handoff archive is intentionally compact and contains the runnable `app/` source plus its dependency-free tests. This repository's README and snapshot index provide the handoff pointer and checksum. Full evidence bundles, architecture/reference documents, raw verification logs, and other development context are delivered separately with each development round rather than expanding the repository source tree.
 
 Before deployment, run the networked dependency install, tests, TypeScript check, and Vite production build in an environment that can reach the npm registry.
