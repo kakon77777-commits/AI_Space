@@ -39,19 +39,23 @@ Principal
 
 The latest reconstructible GitHub chain is:
 
-1. [`snapshots/AI_Space_v0.0.2_Handoff.tar.xz`](snapshots/AI_Space_v0.0.2_Handoff.tar.xz)
-2. overlay [`snapshots/AI_Space_v0.0.3_CodeDelta.tar.xz`](snapshots/AI_Space_v0.0.3_CodeDelta.tar.xz)
-3. overlay both v0.0.4 deltas:
-   - [`snapshots/AI_Space_v0.0.4_CoreDelta.tar.xz`](snapshots/AI_Space_v0.0.4_CoreDelta.tar.xz)
-   - [`snapshots/AI_Space_v0.0.4_UIDelta.tar.xz`](snapshots/AI_Space_v0.0.4_UIDelta.tar.xz)
-4. overlay both v0.0.5 deltas:
-   - [`snapshots/AI_Space_v0.0.5_CoreDelta.tar.xz`](snapshots/AI_Space_v0.0.5_CoreDelta.tar.xz)
-   - [`snapshots/AI_Space_v0.0.5_UIDelta.tar.xz`](snapshots/AI_Space_v0.0.5_UIDelta.tar.xz)
-5. overlay all three v0.0.6 deltas:
-   - [`snapshots/AI_Space_v0.0.6_CoreDelta.tar.xz`](snapshots/AI_Space_v0.0.6_CoreDelta.tar.xz)
-   - [`snapshots/AI_Space_v0.0.6_AppDelta.tar.xz`](snapshots/AI_Space_v0.0.6_AppDelta.tar.xz)
-   - [`snapshots/AI_Space_v0.0.6_SurfaceDelta.tar.xz`](snapshots/AI_Space_v0.0.6_SurfaceDelta.tar.xz)
-6. run networked `npm install`, tests, typecheck, and the Vite production build before deployment.
+1. Download and extract [`snapshots/AI_Space_v0.0.2_Handoff.tar.xz`](snapshots/AI_Space_v0.0.2_Handoff.tar.xz) as the project root.
+2. Overlay the v0.0.3 and later delta archives in version order. Every delta archive contains one wrapper directory, so extract it with `--strip-components=1` into the project root. For example:
+
+```bash
+tar -xJf snapshots/AI_Space_v0.0.3_CodeDelta.tar.xz --strip-components=1 -C <project-root>
+tar -xJf snapshots/AI_Space_v0.0.4_CoreDelta.tar.xz --strip-components=1 -C <project-root>
+tar -xJf snapshots/AI_Space_v0.0.4_UIDelta.tar.xz --strip-components=1 -C <project-root>
+tar -xJf snapshots/AI_Space_v0.0.5_CoreDelta.tar.xz --strip-components=1 -C <project-root>
+tar -xJf snapshots/AI_Space_v0.0.5_UIDelta.tar.xz --strip-components=1 -C <project-root>
+tar -xJf snapshots/AI_Space_v0.0.6_CoreDelta.tar.xz --strip-components=1 -C <project-root>
+tar -xJf snapshots/AI_Space_v0.0.6_AppDelta.tar.xz --strip-components=1 -C <project-root>
+tar -xJf snapshots/AI_Space_v0.0.6_SurfaceDelta.tar.xz --strip-components=1 -C <project-root>
+```
+
+The v0.0.6 reconstruction rule above was fresh-verified against the complete v0.0.6 `app/` tree with `diff=0`.
+
+3. Run networked `npm install`, tests, typecheck, and the Vite production build before deployment.
 
 The complete evidence-bearing **v0.0.6 FULL ZIP** is delivered separately in the development round. GitHub remains intentionally minimal.
 
