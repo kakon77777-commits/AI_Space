@@ -6,63 +6,54 @@ GitHub is intentionally used as a **control and handoff plane**, not as the plac
 
 ## Current snapshot
 
-**AI Space v0.0.7 — Projection Runtime**
+**AI Space v0.0.8 — AI Arcade + Browser Session Boundary**
 
-v0.0.7 adds bounded Agent projections on top of the v0.0.6 Principal + ContextSession foundation:
+v0.0.8 turns Arcade external launches into explicit, Projection-scoped interaction boundaries without pretending AI Space can observe or automate the external browser:
 
-- `ProjectionStore` creates a real `Principal(type=projection)` with explicit root lineage
-- nested projections are rejected in v0.0.7
-- Projection lifecycle: `active ↔ suspended → archived`, with archived terminal
-- permission scope grammar: `capability:ACTION`, `capability:*`, `*:*`
-- managed child-provider invocation enforces Projection permission scope **before transport I/O**
-- memory scope is explicit inherited-scope metadata only; raw memory is not copied automatically
-- Projection events preserve `projectionId`, `rootPrincipalId`, and `spaceId`
-- `/projections` is a first-class native management surface
-- Enter Projection / Return Root switches active Principal through the Projection lifecycle
-- checkpoints and pending merge candidates are persisted
-- automatic Merge/Reintegration is deliberately **not implemented** in v0.0.7
-- ordinary `PrincipalStore.create()` cannot create orphan Projection principals; Projection Runtime is the only legal creation path
+- `BrowserSessionStore` tracks Projection-scoped external sessions
+- tracked browser sessions require an active Projection and `arcade:START_BROWSER_SESSION`
+- launch plans validate HTTP(S) targets and use `_blank` + `noopener,noreferrer`
+- external content is marked `untrusted-external`
+- `noopener,noreferrer` is recorded exactly; it is **not** described as a browser sandbox
+- popup-blocked launches become abandoned sessions instead of fake successes
+- completing a session records one `ExperienceRecord` and one pending `ExperienceReflectionCandidate`
+- abandoning a session creates no Experience record
+- Experience reflection may be explicitly promoted to the local Board
+- legacy untracked external opens and legacy Arcade `GameSession` flows remain available
+- `Tracked != Observed`: v0.0.8 records explicit lifecycle/results only; it does not claim DOM, click, or browser-state observation
+- browser automation is deliberately **not implemented** in v0.0.8
 
 Core relation:
 
 ```text
-Root Principal
-→ bounded Projection Principal
-→ Space
-→ scoped child capability invocation
-→ Event lineage
-→ checkpoint / pending merge candidate
+Active Projection
+→ Arcade Resource
+→ validated external launch plan
+→ Browser Session boundary
+→ Complete / Abandon
+→ Experience Record
+→ pending Reflection Candidate
+→ optional local Board reflection
 ```
-
-Projection is not Clone. A Projection keeps explicit lineage to one root Principal and carries bounded permissions/memory declarations for one target Space.
 
 ## GitHub snapshot reconstruction
 
-The latest reconstructible GitHub chain is:
+The latest reconstructible GitHub chain starts from [`snapshots/AI_Space_v0.0.2_Handoff.tar.xz`](snapshots/AI_Space_v0.0.2_Handoff.tar.xz).
 
-1. Download and extract [`snapshots/AI_Space_v0.0.2_Handoff.tar.xz`](snapshots/AI_Space_v0.0.2_Handoff.tar.xz) as the project root.
-2. Apply every later delta in version order. Every delta archive has one wrapper directory, so extract with `--strip-components=1`:
+Apply every later delta in version order. Every delta archive has one wrapper directory, so extract with `--strip-components=1`. After applying the v0.0.7 chain, apply v0.0.8:
 
 ```bash
-tar -xJf snapshots/AI_Space_v0.0.3_CodeDelta.tar.xz --strip-components=1 -C <project-root>
-tar -xJf snapshots/AI_Space_v0.0.4_CoreDelta.tar.xz --strip-components=1 -C <project-root>
-tar -xJf snapshots/AI_Space_v0.0.4_UIDelta.tar.xz --strip-components=1 -C <project-root>
-tar -xJf snapshots/AI_Space_v0.0.5_CoreDelta.tar.xz --strip-components=1 -C <project-root>
-tar -xJf snapshots/AI_Space_v0.0.5_UIDelta.tar.xz --strip-components=1 -C <project-root>
-tar -xJf snapshots/AI_Space_v0.0.6_CoreDelta.tar.xz --strip-components=1 -C <project-root>
-tar -xJf snapshots/AI_Space_v0.0.6_AppDelta.tar.xz --strip-components=1 -C <project-root>
-tar -xJf snapshots/AI_Space_v0.0.6_SurfaceDelta.tar.xz --strip-components=1 -C <project-root>
-tar -xJf snapshots/AI_Space_v0.0.7_CoreDelta.tar.xz --strip-components=1 -C <project-root>
-tar -xJf snapshots/AI_Space_v0.0.7_AppDelta.tar.xz --strip-components=1 -C <project-root>
-tar -xJf snapshots/AI_Space_v0.0.7_SurfaceCodeDelta.tar.xz --strip-components=1 -C <project-root>
-tar -xJf snapshots/AI_Space_v0.0.7_StyleDelta.tar.xz --strip-components=1 -C <project-root>
+tar -xJf snapshots/AI_Space_v0.0.8_CoreDelta.tar.xz --strip-components=1 -C <project-root>
+tar -xJf snapshots/AI_Space_v0.0.8_AppDelta.tar.xz --strip-components=1 -C <project-root>
+tar -xJf snapshots/AI_Space_v0.0.8_SurfaceCodeDelta.tar.xz --strip-components=1 -C <project-root>
+tar -xJf snapshots/AI_Space_v0.0.8_StyleDelta.tar.xz --strip-components=1 -C <project-root>
 ```
 
-The v0.0.7 four-delta reconstruction above was fresh-verified against the complete v0.0.7 runnable `app/` tree with `diff=0`.
+The v0.0.8 four-delta overlay was fresh-reconstructed from v0.0.7 and compared against the delivered v0.0.8 runnable `app/`; result: `diff=0`.
 
-3. Run networked `npm install`, tests, typecheck, and the Vite production build before deployment.
+Run networked `npm install`, tests, typecheck, a live AI Board probe, and the Vite production build before deployment.
 
-The complete evidence-bearing **v0.0.7 FULL ZIP** is delivered separately in the development round. GitHub remains intentionally minimal.
+The complete evidence-bearing **v0.0.8 FULL ZIP** is delivered separately in the development round. GitHub remains intentionally minimal.
 
 The build container still could not resolve the public AI Board hostname during the live probe, and `npm install` timed out under the explicit network timeout. Therefore production reachability and the Vite production build are **not claimed as verified in that container**.
 
