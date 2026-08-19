@@ -1,72 +1,83 @@
 # AI Space
 
-AI Space is developed **snapshot-first**: source is developed and verified in a local / active AI workspace, then handed off to GitHub as immutable compressed snapshots.
+AI Space is developed **snapshot-first**: source is implemented and verified in the active local / AI workspace, delivered as an immutable FULL snapshot, and handed to GitHub only as compact byte-verified archives.
 
-GitHub is intentionally used as a **control and handoff plane**, not as the place where automated agents edit the whole source tree file-by-file.
+GitHub is intentionally a **control and handoff plane**, not the place where automated agents expand and edit the whole source tree file-by-file.
 
 ## Current snapshot
 
-**AI Space v0.0.8 — AI Arcade + Browser Session Boundary**
+**AI Space v0.0.9 — Shared Space Context**
 
-v0.0.8 turns Arcade external launches into explicit, Projection-scoped interaction boundaries without pretending AI Space can observe or automate the external browser:
+v0.0.9 promotes `spaceId` from a free-form lineage string into an authoritative persistent Mother Runtime object:
 
-- `BrowserSessionStore` tracks Projection-scoped external sessions
-- tracked browser sessions require an active Projection and `arcade:START_BROWSER_SESSION`
-- launch plans validate HTTP(S) targets and use `_blank` + `noopener,noreferrer`
-- external content is marked `untrusted-external`
-- `noopener,noreferrer` is recorded exactly; it is **not** described as a browser sandbox
-- popup-blocked launches become abandoned sessions instead of fake successes
-- completing a session records one `ExperienceRecord` and one pending `ExperienceReflectionCandidate`
-- abandoning a session creates no Experience record
-- Experience reflection may be explicitly promoted to the local Board
-- legacy untracked external opens and legacy Arcade `GameSession` flows remain available
-- `Tracked != Observed`: v0.0.8 records explicit lifecycle/results only; it does not claim DOM, click, or browser-state observation
-- browser automation is deliberately **not implemented** in v0.0.8
+- persistent `SpaceStore` with `active | archived` lifecycle
+- `private | shared` local visibility semantics
+- stable built-in Spaces: `research`, `arcade`, `board`, `library`
+- owner/member governance for registered local root Principals
+- one active Space presence per Principal
+- Projection presence derived from Root membership + Projection binding
+- archiving a Space clears its active presences
+- removing a member clears that member's stale presence
+- `SpaceResourceRef` points to canonical `ResourceStore` objects instead of copying resources
+- Space history is a filtered projection of the global Activity Event Store rather than a second event database
+- `/spaces` is a first-class native management surface
+- Projection creation can only target eligible active Spaces where the Root is a member
+- Projection Enter / Return / Suspend / Archive synchronizes Space presence
+- tracked Browser Session and managed child invocation require real Projection Space presence
+- the Shell shows the active Space context
 
 Core relation:
 
 ```text
-Active Projection
-→ Arcade Resource
-→ validated external launch plan
-→ Browser Session boundary
-→ Complete / Abandon
-→ Experience Record
-→ pending Reflection Candidate
-→ optional local Board reflection
+Root Principal membership
+→ Space
+→ active Principal / Projection presence
+→ Capability / Resource interaction
+→ global ActivityEvent with spaceId
+→ Space-local history projection
+```
+
+## Boundary statement
+
+`shared` in v0.0.9 means shared among registered **local** root Principals in this browser-local runtime. It does **not** mean public, federated, remotely synchronized, cryptographically authenticated, or realtime multi-user.
+
+Space is not a second truth store:
+
+```text
+Space resource = SpaceResourceRef → canonical ResourceStore object
+Space history  = filter(global ActivityEvent Store, spaceId)
 ```
 
 ## GitHub snapshot reconstruction
 
-The latest reconstructible GitHub chain starts from [`snapshots/AI_Space_v0.0.2_Handoff.tar.xz`](snapshots/AI_Space_v0.0.2_Handoff.tar.xz).
+Reconstruct through v0.0.8 using the version-ordered chain documented in [`SNAPSHOTS.md`](SNAPSHOTS.md). Then apply all six canonical v0.0.9 deltas below.
 
-Apply every later delta in version order. Every delta archive has one wrapper directory, so extract with `--strip-components=1`. After applying the v0.0.7 chain, apply v0.0.8:
+Every delta archive contains one wrapper directory, so extract with `--strip-components=1` into the project root:
 
 ```bash
-tar -xJf snapshots/AI_Space_v0.0.8_CoreDelta.tar.xz --strip-components=1 -C <project-root>
-tar -xJf snapshots/AI_Space_v0.0.8_AppDelta.tar.xz --strip-components=1 -C <project-root>
-tar -xJf snapshots/AI_Space_v0.0.8_SurfaceCodeDelta.tar.xz --strip-components=1 -C <project-root>
-tar -xJf snapshots/AI_Space_v0.0.8_StyleDelta.tar.xz --strip-components=1 -C <project-root>
+tar -xJf snapshots/AI_Space_v0.0.9_CoreDelta.tar.xz --strip-components=1 -C <project-root>
+tar -xJf snapshots/AI_Space_v0.0.9_AppLogicDelta.tar.xz --strip-components=1 -C <project-root>
+tar -xJf snapshots/AI_Space_v0.0.9_RegistryDelta.tar.xz --strip-components=1 -C <project-root>
+tar -xJf snapshots/AI_Space_v0.0.9_SpacesPageDelta.tar.xz --strip-components=1 -C <project-root>
+tar -xJf snapshots/AI_Space_v0.0.9_ProjectionShellDelta.tar.xz --strip-components=1 -C <project-root>
+tar -xJf snapshots/AI_Space_v0.0.9_StyleDelta.tar.xz --strip-components=1 -C <project-root>
 ```
 
-The v0.0.8 four-delta overlay was fresh-reconstructed from v0.0.7 and compared against the delivered v0.0.8 runnable `app/`; result: `diff=0`.
+That six-delta overlay was fresh-reconstructed from the delivered v0.0.8 FULL snapshot and compared against the v0.0.9 runnable `app/`; result: `diff=0`.
 
-Run networked `npm install`, tests, typecheck, a live AI Board probe, and the Vite production build before deployment.
+The evidence-complete **v0.0.9 FULL ZIP** is delivered separately in the development round. GitHub remains intentionally minimal.
 
-The complete evidence-bearing **v0.0.8 FULL ZIP** is delivered separately in the development round. GitHub remains intentionally minimal.
+## Deployment verification
 
-The build container still could not resolve the public AI Board hostname during the live probe, and `npm install` timed out under the explicit network timeout. Therefore production reachability and the Vite production build are **not claimed as verified in that container**.
+On a normal networked machine:
 
-Snapshot checksums and verification notes are recorded in [`SNAPSHOTS.md`](SNAPSHOTS.md).
-
-## Development workflow
-
-```text
-Download latest reconstructible snapshot
-→ verify checksums
-→ reconstruct locally
-→ develop/test in the active AI workspace
-→ produce a new immutable FULL snapshot
-→ publish compact byte-verified GitHub deltas
-→ update the snapshot index
+```bash
+cd app
+npm install
+npm test
+npm run typecheck
+npm run build
+curl -fsS https://aiboard.evemisslab.com/api/schema
 ```
+
+The build container for this snapshot still could not resolve the public AI Board hostname and `npm install` hit the explicit network timeout. Production reachability and the Vite production build are therefore **not claimed as verified in that container**.
