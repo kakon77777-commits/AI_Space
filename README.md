@@ -6,66 +6,66 @@ GitHub is intentionally a **control and handoff plane**, not the place where aut
 
 ## Current snapshot
 
-**AI Space v0.0.9 — Shared Space Context**
+**AI Space v0.1.0 — First Coherent AI Space MVP**
 
-v0.0.9 promotes `spaceId` from a free-form lineage string into an authoritative persistent Mother Runtime object:
-
-- persistent `SpaceStore` with `active | archived` lifecycle
-- `private | shared` local visibility semantics
-- stable built-in Spaces: `research`, `arcade`, `board`, `library`
-- owner/member governance for registered local root Principals
-- one active Space presence per Principal
-- Projection presence derived from Root membership + Projection binding
-- archiving a Space clears its active presences
-- removing a member clears that member's stale presence
-- `SpaceResourceRef` points to canonical `ResourceStore` objects instead of copying resources
-- Space history is a filtered projection of the global Activity Event Store rather than a second event database
-- `/spaces` is a first-class native management surface
-- Projection creation can only target eligible active Spaces where the Root is a member
-- Projection Enter / Return / Suspend / Archive synchronizes Space presence
-- tracked Browser Session and managed child invocation require real Projection Space presence
-- the Shell shows the active Space context
-
-Core relation:
+v0.1.0 is a coherence release rather than another horizontal subsystem. It adds a reload-safe **MVP Journey** that proves the existing runtime spine can form one persistent lineage:
 
 ```text
-Root Principal membership
+Principal
+→ ContextSession
+→ Projection
 → Space
-→ active Principal / Projection presence
-→ Capability / Resource interaction
-→ global ActivityEvent with spaceId
-→ Space-local history projection
+→ Capability / Resource
+→ tracked Browser Session boundary
+→ Experience
+→ Reflection
+→ Persist
+→ Return Root
 ```
 
-## Boundary statement
+The new `MvpJourneyStore` stores stable cross-store references only; authoritative Principal, Session, Projection, Space, Resource, BrowserSession, Experience and Board data remain in their existing stores.
 
-`shared` in v0.0.9 means shared among registered **local** root Principals in this browser-local runtime. It does **not** mean public, federated, remotely synchronized, cryptographically authenticated, or realtime multi-user.
+The pure coherence evaluator recomputes nine stages as `pass | pending | fail`:
 
-Space is not a second truth store:
+1. Principal
+2. Context
+3. Projection
+4. Space
+5. Capability
+6. Interaction
+7. Experience
+8. Reflection
+9. Return
 
-```text
-Space resource = SpaceResourceRef → canonical ResourceStore object
-Space history  = filter(global ActivityEvent Store, spaceId)
-```
+`/mvp` is a guided acceptance surface over the same runtime. Its UI does not declare success by itself: the evaluator re-reads authoritative stores. The core acceptance test completes a Journey, constructs fresh store instances over the same persistent StorageAdapter, and requires all nine stages to remain `pass` after reload.
+
+## Boundaries retained
+
+- `Tracked != Observed`: Browser Session tracking is an explicit lifecycle boundary, not DOM/click/screenshot/browser-state observation.
+- No autonomous browser control is added in v0.1.0.
+- Projection Merge/Reintegration remains explicit/pending; it is not automated.
+- Shared Space still means registered local Principals in the browser-local runtime, not public federation or realtime remote collaboration.
+- GitHub remains source-unexpanded.
 
 ## GitHub snapshot reconstruction
 
-Reconstruct through v0.0.8 using the version-ordered chain documented in [`SNAPSHOTS.md`](SNAPSHOTS.md). Then apply all six canonical v0.0.9 deltas below.
+Reconstruct through v0.0.9 using the ordered chain in [`SNAPSHOTS.md`](SNAPSHOTS.md). Then apply the canonical v0.1.0 handoff.
 
-Every delta archive contains one wrapper directory, so extract with `--strip-components=1` into the project root:
+File-overlay archives have one wrapper directory:
 
 ```bash
-tar -xJf snapshots/AI_Space_v0.0.9_CoreDelta.tar.xz --strip-components=1 -C <project-root>
-tar -xJf snapshots/AI_Space_v0.0.9_AppLogicDelta.tar.xz --strip-components=1 -C <project-root>
-tar -xJf snapshots/AI_Space_v0.0.9_RegistryDelta.tar.xz --strip-components=1 -C <project-root>
-tar -xJf snapshots/AI_Space_v0.0.9_SpacesPageDelta.tar.xz --strip-components=1 -C <project-root>
-tar -xJf snapshots/AI_Space_v0.0.9_ProjectionShellDelta.tar.xz --strip-components=1 -C <project-root>
-tar -xJf snapshots/AI_Space_v0.0.9_StyleDelta.tar.xz --strip-components=1 -C <project-root>
+tar -xJf snapshots/AI_Space_v0.1.0_CoreRuntimeDelta.tar.xz --strip-components=1 -C <project-root>
+tar -xJf snapshots/AI_Space_v0.1.0_CoreTestsDelta.tar.xz --strip-components=1 -C <project-root>
+tar -xJf snapshots/AI_Space_v0.1.0_MvpPageDelta.tar.xz --strip-components=1 -C <project-root>
+tar -xJf snapshots/AI_Space_v0.1.0_RegistryDelta.tar.xz --strip-components=1 -C <project-root>
+tar -xJf snapshots/AI_Space_v0.1.0_StyleDelta.tar.xz --strip-components=1 -C <project-root>
+tar -xJf snapshots/AI_Space_v0.1.0_AppPatchDelta.tar.xz --strip-components=1 -C <project-root>
+(cd <project-root> && patch --batch -p0 < patches/App.tsx.patch)
 ```
 
-That six-delta overlay was fresh-reconstructed from the delivered v0.0.8 FULL snapshot and compared against the v0.0.9 runnable `app/`; result: `diff=0`.
+The six-part reconstruction was fresh-verified from the delivered v0.0.9 FULL snapshot and compared against the delivered v0.1.0 runnable `app/`; result: `diff=0`.
 
-The evidence-complete **v0.0.9 FULL ZIP** is delivered separately in the development round. GitHub remains intentionally minimal.
+The evidence-complete **v0.1.0 FULL ZIP** is delivered separately in the development round. GitHub remains intentionally minimal.
 
 ## Deployment verification
 
@@ -80,4 +80,4 @@ npm run build
 curl -fsS https://aiboard.evemisslab.com/api/schema
 ```
 
-The build container for this snapshot still could not resolve the public AI Board hostname and `npm install` hit the explicit network timeout. Production reachability and the Vite production build are therefore **not claimed as verified in that container**.
+The v0.1.0 build container still could not resolve the public AI Board hostname and `npm install` hit the explicit 25-second timeout. Production reachability, network-installed Vitest, and the Vite production build are therefore **not claimed as verified in that container**.
