@@ -1,51 +1,57 @@
 # AI Space
 
-AI Space is developed **snapshot-first**: source is developed and verified in a local / active AI workspace, then handed off to GitHub as immutable compressed snapshots or verified deltas.
+AI Space is developed **snapshot-first**: source is developed and verified in a local / active AI workspace, then handed off to GitHub as immutable compressed snapshots.
 
 GitHub is intentionally used as a **control and handoff plane**, not as the place where automated agents edit the whole source tree file-by-file.
 
 ## Current snapshot
 
-**AI Space v0.0.4 — First Live Child Capability**
+**AI Space v0.0.5 — Capability Runtime Manager**
 
-v0.0.4 connects the existing independent `kakon77777-commits/ai-board` project as the first real API child provider without copying that project's source into AI Space.
+v0.0.5 turns the passive capability registry into an operational control plane:
 
-- generic API action bindings now support typed GET query / POST JSON dispatch
-- provider health probing is part of the runtime contract
-- AI Board manifest targets the public `https://aiboard.evemisslab.com` runtime
-- Remote AI Board can load public messages and submit append-only posts through `/api/messages`
-- Local Board remains a separate local reflection store; remote AI Board is a different append-only ledger
-- AI Space writes remote history events only after the remote operation reports success
-- failed refresh after a confirmed remote append does not misreport the append itself as failed
-- no OAuth, privileged child credentials, browser automation, or Agent Projection is added in this release
+- persistent per-provider runtime state, separate from desired manifest state
+- enable / disable gates that survive reloads
+- health probes with last probe time, latency, health, and last error
+- side-effect-free dispatch preview
+- managed API invocation with success / failure observations
+- `/capabilities` management surface
+- shared provider lifecycle / invocation events
+- AI Board traffic now delegates through the same runtime manager gate, so a disabled child cannot be bypassed from the Board page
+- v0.0.4 AI Board REST adapter remains the first connected child provider
 
 Core flow:
 
 ```text
-AI Space action
-→ child capability manifest
-→ deterministic dispatch plan
-→ HTTP provider
-→ confirmed result
-→ AI Space event history
+Child manifest
+→ register provider
+→ restore runtime state
+→ probe / enable / disable
+→ preview
+→ managed invoke
+→ observed runtime state
+→ shared event history
 ```
 
-The AI Board repository already documents and implements the public REST contract used here. The build container for this snapshot could not resolve the public domain during the live probe, so **production reachability was not verified from this container**; the integration is contract-tested and must be re-probed in a normal networked environment before deployment.
+`manifest.lifecycle` remains desired/configuration state. `runtime.enabled` is the local operational gate. `runtime.health`, timestamps, latency, and errors are observed runtime state.
 
 ## GitHub snapshot reconstruction
 
-GitHub keeps compact, byte-verified reconstruction artifacts rather than an expanded source tree.
+The latest reconstructible GitHub chain is:
 
-To reconstruct v0.0.4 from GitHub:
-
-1. Download and extract [`snapshots/AI_Space_v0.0.2_Handoff.tar.xz`](snapshots/AI_Space_v0.0.2_Handoff.tar.xz).
-2. Overlay [`snapshots/AI_Space_v0.0.3_CodeDelta.tar.xz`](snapshots/AI_Space_v0.0.3_CodeDelta.tar.xz) to obtain the v0.0.3 runtime source.
-3. Overlay both v0.0.4 artifacts:
+1. [`snapshots/AI_Space_v0.0.2_Handoff.tar.xz`](snapshots/AI_Space_v0.0.2_Handoff.tar.xz)
+2. overlay [`snapshots/AI_Space_v0.0.3_CodeDelta.tar.xz`](snapshots/AI_Space_v0.0.3_CodeDelta.tar.xz)
+3. overlay both v0.0.4 deltas:
    - [`snapshots/AI_Space_v0.0.4_CoreDelta.tar.xz`](snapshots/AI_Space_v0.0.4_CoreDelta.tar.xz)
    - [`snapshots/AI_Space_v0.0.4_UIDelta.tar.xz`](snapshots/AI_Space_v0.0.4_UIDelta.tar.xz)
-4. Run networked dependency installation, tests, typecheck, live AI Board probe, and the Vite production build before deployment.
+4. overlay both v0.0.5 deltas:
+   - [`snapshots/AI_Space_v0.0.5_CoreDelta.tar.xz`](snapshots/AI_Space_v0.0.5_CoreDelta.tar.xz)
+   - [`snapshots/AI_Space_v0.0.5_UIDelta.tar.xz`](snapshots/AI_Space_v0.0.5_UIDelta.tar.xz)
+5. run networked `npm install`, tests, typecheck, and the Vite production build before deployment.
 
-The **complete evidence-bearing v0.0.4 ZIP** is delivered separately in the development round. GitHub remains intentionally minimal.
+The complete evidence-bearing **v0.0.5 FULL ZIP** is delivered separately in the development round. GitHub remains intentionally minimal.
+
+The build container could not resolve the public AI Board hostname during the live probe, and `npm install` timed out under the explicit network timeout. Therefore production reachability and the Vite production build are **not claimed as verified in that container**.
 
 Snapshot checksums and verification notes are recorded in [`SNAPSHOTS.md`](SNAPSHOTS.md).
 
@@ -54,8 +60,9 @@ Snapshot checksums and verification notes are recorded in [`SNAPSHOTS.md`](SNAPS
 ```text
 Download latest reconstructible snapshot
 → verify checksums
-→ develop/test locally or in the active AI workspace
+→ reconstruct locally
+→ develop/test in the active AI workspace
 → produce a new immutable FULL snapshot
-→ publish compact byte-verified GitHub handoff/delta artifacts
-→ update GitHub snapshot index
+→ publish compact byte-verified GitHub deltas
+→ update the snapshot index
 ```
