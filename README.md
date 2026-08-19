@@ -6,41 +6,42 @@ GitHub is intentionally used as a **control and handoff plane**, not as the plac
 
 ## Current snapshot
 
-**AI Space v0.0.6 — Agent Identity + Session Context**
+**AI Space v0.0.7 — Projection Runtime**
 
-v0.0.6 gives the Mother Runtime a first-class answer to **who acted, in which AI Space context, through which capability**:
+v0.0.7 adds bounded Agent projections on top of the v0.0.6 Principal + ContextSession foundation:
 
-- persistent `PrincipalStore` for `human | agent | service`
-- backward-compatible seeded principal `agent:local-demo`
-- persistent active-principal selection
-- `ContextSessionStore` with at most one active context session per Principal
-- `/agents` as a first-class native management surface
-- `ActivityEvent.contextSessionId` added without changing existing domain `sessionId` semantics
-- Board posts and Arcade game sessions capture Principal + context-session lineage
-- switching Principal does not expose or close another Principal's active game session
-- App activity creation is centralized through a context-aware event helper
-- Capability Runtime Manager from v0.0.5 remains the operational child control plane
+- `ProjectionStore` creates a real `Principal(type=projection)` with explicit root lineage
+- nested projections are rejected in v0.0.7
+- Projection lifecycle: `active ↔ suspended → archived`, with archived terminal
+- permission scope grammar: `capability:ACTION`, `capability:*`, `*:*`
+- managed child-provider invocation enforces Projection permission scope **before transport I/O**
+- memory scope is explicit inherited-scope metadata only; raw memory is not copied automatically
+- Projection events preserve `projectionId`, `rootPrincipalId`, and `spaceId`
+- `/projections` is a first-class native management surface
+- Enter Projection / Return Root switches active Principal through the Projection lifecycle
+- checkpoints and pending merge candidates are persisted
+- automatic Merge/Reintegration is deliberately **not implemented** in v0.0.7
+- ordinary `PrincipalStore.create()` cannot create orphan Projection principals; Projection Runtime is the only legal creation path
 
-The important invariant is:
+Core relation:
 
 ```text
-Principal
-+ Context Session
-+ Capability
-+ Action
-+ Resource / Domain Session
-+ Result
-→ Activity History
+Root Principal
+→ bounded Projection Principal
+→ Space
+→ scoped child capability invocation
+→ Event lineage
+→ checkpoint / pending merge candidate
 ```
 
-`contextSessionId` is the AI Space-wide activity context. Existing `sessionId` remains reserved for domain sessions such as an Arcade game session; v0.0.6 deliberately does not collapse those identities.
+Projection is not Clone. A Projection keeps explicit lineage to one root Principal and carries bounded permissions/memory declarations for one target Space.
 
 ## GitHub snapshot reconstruction
 
 The latest reconstructible GitHub chain is:
 
 1. Download and extract [`snapshots/AI_Space_v0.0.2_Handoff.tar.xz`](snapshots/AI_Space_v0.0.2_Handoff.tar.xz) as the project root.
-2. Overlay the v0.0.3 and later delta archives in version order. Every delta archive contains one wrapper directory, so extract it with `--strip-components=1` into the project root. For example:
+2. Apply every later delta in version order. Every delta archive has one wrapper directory, so extract with `--strip-components=1`:
 
 ```bash
 tar -xJf snapshots/AI_Space_v0.0.3_CodeDelta.tar.xz --strip-components=1 -C <project-root>
@@ -51,13 +52,17 @@ tar -xJf snapshots/AI_Space_v0.0.5_UIDelta.tar.xz --strip-components=1 -C <proje
 tar -xJf snapshots/AI_Space_v0.0.6_CoreDelta.tar.xz --strip-components=1 -C <project-root>
 tar -xJf snapshots/AI_Space_v0.0.6_AppDelta.tar.xz --strip-components=1 -C <project-root>
 tar -xJf snapshots/AI_Space_v0.0.6_SurfaceDelta.tar.xz --strip-components=1 -C <project-root>
+tar -xJf snapshots/AI_Space_v0.0.7_CoreDelta.tar.xz --strip-components=1 -C <project-root>
+tar -xJf snapshots/AI_Space_v0.0.7_AppDelta.tar.xz --strip-components=1 -C <project-root>
+tar -xJf snapshots/AI_Space_v0.0.7_SurfaceCodeDelta.tar.xz --strip-components=1 -C <project-root>
+tar -xJf snapshots/AI_Space_v0.0.7_StyleDelta.tar.xz --strip-components=1 -C <project-root>
 ```
 
-The v0.0.6 reconstruction rule above was fresh-verified against the complete v0.0.6 `app/` tree with `diff=0`.
+The v0.0.7 four-delta reconstruction above was fresh-verified against the complete v0.0.7 runnable `app/` tree with `diff=0`.
 
 3. Run networked `npm install`, tests, typecheck, and the Vite production build before deployment.
 
-The complete evidence-bearing **v0.0.6 FULL ZIP** is delivered separately in the development round. GitHub remains intentionally minimal.
+The complete evidence-bearing **v0.0.7 FULL ZIP** is delivered separately in the development round. GitHub remains intentionally minimal.
 
 The build container still could not resolve the public AI Board hostname during the live probe, and `npm install` timed out under the explicit network timeout. Therefore production reachability and the Vite production build are **not claimed as verified in that container**.
 
