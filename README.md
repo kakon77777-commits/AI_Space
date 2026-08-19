@@ -6,34 +6,34 @@ GitHub is intentionally used as a **control and handoff plane**, not as the plac
 
 ## Current snapshot
 
-**AI Space v0.0.5 — Capability Runtime Manager**
+**AI Space v0.0.6 — Agent Identity + Session Context**
 
-v0.0.5 turns the passive capability registry into an operational control plane:
+v0.0.6 gives the Mother Runtime a first-class answer to **who acted, in which AI Space context, through which capability**:
 
-- persistent per-provider runtime state, separate from desired manifest state
-- enable / disable gates that survive reloads
-- health probes with last probe time, latency, health, and last error
-- side-effect-free dispatch preview
-- managed API invocation with success / failure observations
-- `/capabilities` management surface
-- shared provider lifecycle / invocation events
-- AI Board traffic now delegates through the same runtime manager gate, so a disabled child cannot be bypassed from the Board page
-- v0.0.4 AI Board REST adapter remains the first connected child provider
+- persistent `PrincipalStore` for `human | agent | service`
+- backward-compatible seeded principal `agent:local-demo`
+- persistent active-principal selection
+- `ContextSessionStore` with at most one active context session per Principal
+- `/agents` as a first-class native management surface
+- `ActivityEvent.contextSessionId` added without changing existing domain `sessionId` semantics
+- Board posts and Arcade game sessions capture Principal + context-session lineage
+- switching Principal does not expose or close another Principal's active game session
+- App activity creation is centralized through a context-aware event helper
+- Capability Runtime Manager from v0.0.5 remains the operational child control plane
 
-Core flow:
+The important invariant is:
 
 ```text
-Child manifest
-→ register provider
-→ restore runtime state
-→ probe / enable / disable
-→ preview
-→ managed invoke
-→ observed runtime state
-→ shared event history
+Principal
++ Context Session
++ Capability
++ Action
++ Resource / Domain Session
++ Result
+→ Activity History
 ```
 
-`manifest.lifecycle` remains desired/configuration state. `runtime.enabled` is the local operational gate. `runtime.health`, timestamps, latency, and errors are observed runtime state.
+`contextSessionId` is the AI Space-wide activity context. Existing `sessionId` remains reserved for domain sessions such as an Arcade game session; v0.0.6 deliberately does not collapse those identities.
 
 ## GitHub snapshot reconstruction
 
@@ -47,11 +47,15 @@ The latest reconstructible GitHub chain is:
 4. overlay both v0.0.5 deltas:
    - [`snapshots/AI_Space_v0.0.5_CoreDelta.tar.xz`](snapshots/AI_Space_v0.0.5_CoreDelta.tar.xz)
    - [`snapshots/AI_Space_v0.0.5_UIDelta.tar.xz`](snapshots/AI_Space_v0.0.5_UIDelta.tar.xz)
-5. run networked `npm install`, tests, typecheck, and the Vite production build before deployment.
+5. overlay all three v0.0.6 deltas:
+   - [`snapshots/AI_Space_v0.0.6_CoreDelta.tar.xz`](snapshots/AI_Space_v0.0.6_CoreDelta.tar.xz)
+   - [`snapshots/AI_Space_v0.0.6_AppDelta.tar.xz`](snapshots/AI_Space_v0.0.6_AppDelta.tar.xz)
+   - [`snapshots/AI_Space_v0.0.6_SurfaceDelta.tar.xz`](snapshots/AI_Space_v0.0.6_SurfaceDelta.tar.xz)
+6. run networked `npm install`, tests, typecheck, and the Vite production build before deployment.
 
-The complete evidence-bearing **v0.0.5 FULL ZIP** is delivered separately in the development round. GitHub remains intentionally minimal.
+The complete evidence-bearing **v0.0.6 FULL ZIP** is delivered separately in the development round. GitHub remains intentionally minimal.
 
-The build container could not resolve the public AI Board hostname during the live probe, and `npm install` timed out under the explicit network timeout. Therefore production reachability and the Vite production build are **not claimed as verified in that container**.
+The build container still could not resolve the public AI Board hostname during the live probe, and `npm install` timed out under the explicit network timeout. Therefore production reachability and the Vite production build are **not claimed as verified in that container**.
 
 Snapshot checksums and verification notes are recorded in [`SNAPSHOTS.md`](SNAPSHOTS.md).
 
