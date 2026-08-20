@@ -6,66 +6,52 @@ GitHub is intentionally a **control and handoff plane**, not the place where aut
 
 ## Current snapshot
 
-**AI Space v0.1.0 — First Coherent AI Space MVP**
+**AI Space v0.1.1 — MVP Hardening / Audit**
 
-v0.1.0 is a coherence release rather than another horizontal subsystem. It adds a reload-safe **MVP Journey** that proves the existing runtime spine can form one persistent lineage:
+v0.1.1 adds no horizontal product subsystem. It hardens the v0.1.0 coherent MVP against state corruption, permission/presence bypasses, orphan references, and interrupted Journeys.
+
+Hardening layers:
 
 ```text
-Principal
-→ ContextSession
-→ Projection
-→ Space
-→ Capability / Resource
-→ tracked Browser Session boundary
-→ Experience
-→ Reflection
-→ Persist
-→ Return Root
+pure invariant audit
+→ deterministic derived-state cleanup
+→ shared Projection runtime access guard
+→ Journey reference recovery / resume / explicit broken-abandon
+→ fresh-store reload re-audit
 ```
 
-The new `MvpJourneyStore` stores stable cross-store references only; authoritative Principal, Session, Projection, Space, Resource, BrowserSession, Experience and Board data remain in their existing stores.
+Key invariants:
+- audit is pure and never mutates the supplied runtime snapshot;
+- automatic cleanup removes only derived stale Space presence and missing-resource refs;
+- tracked browser, MVP interaction, and managed child invocation require `active Projection + permission + real bound-Space presence`;
+- Journey recovery backfills only unique lineage-proven Experience / Reflection references;
+- irrecoverable active Journeys are explicitly abandoned rather than fabricated as complete;
+- authoritative Principal, Projection, Experience, Board Post, Journey, and Activity Event records are not auto-deleted.
 
-The pure coherence evaluator recomputes nine stages as `pass | pending | fail`:
-
-1. Principal
-2. Context
-3. Projection
-4. Space
-5. Capability
-6. Interaction
-7. Experience
-8. Reflection
-9. Return
-
-`/mvp` is a guided acceptance surface over the same runtime. Its UI does not declare success by itself: the evaluator re-reads authoritative stores. The core acceptance test completes a Journey, constructs fresh store instances over the same persistent StorageAdapter, and requires all nine stages to remain `pass` after reload.
+The deliberate-corruption acceptance test damages persisted MVP state, runs audit → cleanup → reconcile → resume, recreates fresh store instances over the same StorageAdapter, and requires the recovered active Journey to be coherent with zero hardening errors.
 
 ## Boundaries retained
 
-- `Tracked != Observed`: Browser Session tracking is an explicit lifecycle boundary, not DOM/click/screenshot/browser-state observation.
-- No autonomous browser control is added in v0.1.0.
-- Projection Merge/Reintegration remains explicit/pending; it is not automated.
-- Shared Space still means registered local Principals in the browser-local runtime, not public federation or realtime remote collaboration.
+- `Tracked != Observed`; no DOM/click/screenshot/browser-state observation.
+- No autonomous browser control.
+- No automatic Projection Merge/Reintegration.
+- Shared Space is still local runtime semantics, not public federation or realtime remote collaboration.
 - GitHub remains source-unexpanded.
 
-## GitHub snapshot reconstruction
+## Reconstruct v0.1.1
 
-Reconstruct through v0.0.9 using the ordered chain in [`SNAPSHOTS.md`](SNAPSHOTS.md). Then apply the canonical v0.1.0 handoff.
-
-File-overlay archives have one wrapper directory:
+First reconstruct v0.1.0 using `SNAPSHOTS.md`, then apply:
 
 ```bash
-tar -xJf snapshots/AI_Space_v0.1.0_CoreRuntimeDelta.tar.xz --strip-components=1 -C <project-root>
-tar -xJf snapshots/AI_Space_v0.1.0_CoreTestsDelta.tar.xz --strip-components=1 -C <project-root>
-tar -xJf snapshots/AI_Space_v0.1.0_MvpPageDelta.tar.xz --strip-components=1 -C <project-root>
-tar -xJf snapshots/AI_Space_v0.1.0_RegistryDelta.tar.xz --strip-components=1 -C <project-root>
-tar -xJf snapshots/AI_Space_v0.1.0_StyleDelta.tar.xz --strip-components=1 -C <project-root>
-tar -xJf snapshots/AI_Space_v0.1.0_AppPatchDelta.tar.xz --strip-components=1 -C <project-root>
+tar -xJf snapshots/AI_Space_v0.1.1_NewCoreDelta.tar.xz --strip-components=1 -C <project-root>
+tar -xJf snapshots/AI_Space_v0.1.1_TestsDelta.tar.xz --strip-components=1 -C <project-root>
+tar -xJf snapshots/AI_Space_v0.1.1_CorePatchDelta.tar.xz --strip-components=1 -C <project-root>
+(cd <project-root> && patch --batch -p0 < patches/core.patch)
+tar -xJf snapshots/AI_Space_v0.1.1_AppPatchDelta.tar.xz --strip-components=1 -C <project-root>
 (cd <project-root> && patch --batch -p0 < patches/App.tsx.patch)
 ```
 
-The six-part reconstruction was fresh-verified from the delivered v0.0.9 FULL snapshot and compared against the delivered v0.1.0 runnable `app/`; result: `diff=0`.
-
-The evidence-complete **v0.1.0 FULL ZIP** is delivered separately in the development round. GitHub remains intentionally minimal.
+That four-part handoff was fresh-reconstructed from v0.1.0 and compared against the delivered v0.1.1 runnable `app/`; result: `diff=0`.
 
 ## Deployment verification
 
@@ -80,4 +66,4 @@ npm run build
 curl -fsS https://aiboard.evemisslab.com/api/schema
 ```
 
-The v0.1.0 build container still could not resolve the public AI Board hostname and `npm install` hit the explicit 25-second timeout. Production reachability, network-installed Vitest, and the Vite production build are therefore **not claimed as verified in that container**.
+The v0.1.1 build container still could not resolve the public AI Board hostname and `npm install` hit the explicit 25-second timeout. Production reachability, network-installed Vitest, and the Vite production build are therefore **not claimed as verified in that container**.
