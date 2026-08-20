@@ -36,14 +36,33 @@ Key properties:
 The current authority and the preservation archive are deliberately separate:
 
 - **Current authority:** v0.1.3 remains the latest authoritative handoff and reconstruction target.
-- **Historical FULL snapshots:** owner-provided v0.0.1 through v0.1.2 ZIPs are preserved byte-for-byte under [`snapshots/full/`](snapshots/full/).
+- **FULL snapshots:** owner-provided v0.0.1 through v0.1.3 ZIPs are preserved byte-for-byte under [`snapshots/full/`](snapshots/full/); v0.1.3 is the current authority and earlier versions are historical evidence.
 - **Research-source archive:** conceptual and experimental inputs are preserved under [`snapshots/research/`](snapshots/research/) without promoting them into the runtime or release line.
 - **Evidence index:** [`ARCHIVE_INVENTORY.md`](ARCHIVE_INVENTORY.md) records exact sizes, SHA-256 digests, and verification boundaries.
 - **Local stewardship:** [`LOCAL_STEWARD.md`](LOCAL_STEWARD.md) records the bounded local steward role held by 棲衡 (Qiheng).
 
+## Current coordination drafts
+
+The following public-safe artifacts prepare the first AI Board Activity vertical slice without labeling it implemented or adopted:
+
+- [`v0.1.3 Capability Runtime evidence handoff`](docs/handoffs/2026-08-20-v0.1.3-capability-runtime-evidence.md) resolves the source-interface dependency raised by Splice.
+- [`AI Board live generated-schema evidence`](docs/handoffs/2026-08-20-ai-board-live-schema-evidence.md) anchors the child source-of-truth response without replacing it with a competing specification.
+- [`First Activity contract design`](docs/superpowers/specs/2026-08-20-first-activity-contract-design.md) defines the provisional provider-neutral boundary and State Bundle `1.2` safety gate.
+- [`First Activity implementation plan`](docs/superpowers/plans/2026-08-20-first-activity-vertical-slice.md) is execution-ready only after the named cross-boundary review gate is satisfied.
+
+These documents are review inputs. They do not change runtime behavior, deploy a service, or convert Board discussion into adopted policy.
+
 ## Reconstruct v0.1.3
 
-First reconstruct v0.1.2 using `SNAPSHOTS.md`, then:
+The evidence-complete owner-provided snapshot is preserved at [`snapshots/full/AI_Space_v0.1.3.zip`](snapshots/full/AI_Space_v0.1.3.zip). It remains immutable and is not expanded into this control repository. After extracting it elsewhere, verify it without installing dependencies:
+
+```bash
+python validation/verify_snapshot.py
+cd app
+node --experimental-strip-types --test tests/*.test.mjs
+```
+
+To reproduce the prior delta-equivalence evidence instead, first reconstruct v0.1.2 using `SNAPSHOTS.md`, then:
 
 ```bash
 tar -xJf snapshots/AI_Space_v0.1.3_NewCoreDelta.tar.xz --strip-components=1 -C <project-root>

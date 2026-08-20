@@ -6,15 +6,15 @@ This index records the owner-provided local source collection added to the repos
 
 ## Verification evidence
 
-- All 12 historical FULL ZIPs opened successfully and contained exactly one `CHECKSUMS.sha256`.
-- Every listed payload was present, every SHA-256 matched, and no unlisted payload file was found: 53, 67, 82, 71, 77, 92, 105, 99, 103, 111, 120, and 128 files respectively.
-- A clean extraction of v0.1.2 passed its bundled verifier: `PASS version=0.1.2 files=128`.
-- The dependency-free v0.1.2 core suite passed: 130 tests, 0 failures.
-- Source-to-repository SHA-256 comparison passed for all 12 copied ZIPs.
+- All 13 FULL ZIPs opened successfully and contained exactly one `CHECKSUMS.sha256`.
+- Every listed payload was present, every SHA-256 matched, and no unlisted payload file was found: 53, 67, 82, 71, 77, 92, 105, 99, 103, 111, 120, 128, and 138 files respectively.
+- A clean extraction of v0.1.3 passed its bundled verifier: `PASS version=0.1.3 files=138`.
+- The dependency-free v0.1.3 core suite passed: 146 tests, 0 failures.
+- Source-to-repository SHA-256 comparison passed for all 13 copied ZIPs.
 - The research archive was expanded again after packaging; all Unicode filenames survived and all eight manifest-listed payloads matched.
-- A bounded pre-publication scan found no executable payloads, unsafe archive paths, sensitive filenames, or high-confidence credential patterns. This is a publication gate, not a proof that arbitrary prose contains no sensitive meaning.
+- A bounded pre-publication scan found no executable or script payloads, unsafe archive paths, sensitive filenames, or high-confidence credential patterns in the newly added v0.1.3 snapshot. This is a publication gate, not a proof that arbitrary prose contains no sensitive meaning.
 
-## Historical FULL snapshots
+## FULL snapshots
 
 | Version | Repository path | Bytes | SHA-256 |
 |---|---|---:|---|
@@ -30,6 +30,7 @@ This index records the owner-provided local source collection added to the repos
 | v0.1.0 | `snapshots/full/AI_Space_v0.1.0.zip` | 214,597 | `3d2b7276eecac6562d54e4de48e252461655ab98393dcfdb81c8cc956815a676` |
 | v0.1.1 | `snapshots/full/AI_Space_v0.1.1.zip` | 215,335 | `f918aa33a9cb3c52acec6a5e7e101184da337ed85b7e3b65198288bfa5e1b031` |
 | v0.1.2 | `snapshots/full/AI_Space_v0.1.2.zip` | 242,610 | `8c79a82f58199ce8222b6073c2159b7cb8d5407770881e329bb0c810462dd9a7` |
+| **v0.1.3** | `snapshots/full/AI_Space_v0.1.3.zip` | 250,874 | `ab05718f118e968a4b3637f955ad69a04b000c1ba02c6b8fa702783a901c74b4` |
 
 ## Research-source archive
 
@@ -43,6 +44,6 @@ The research archive is evidence and design history only. It is not executable r
 ## Authority boundaries
 
 - The v0.0.1–v0.1.2 FULL ZIPs are exact historical preservation artifacts.
-- v0.1.3 remains the latest release authority represented by this repository.
-- No v0.1.3 FULL ZIP was inferred or synthesized from older local material.
+- The v0.1.3 FULL ZIP is the exact owner-provided current release artifact and remains the latest release authority represented by this repository.
+- The v0.1.3 FULL ZIP was not inferred or synthesized from older local material.
 - No deployment, cloud sync, public-service reachability, or new production behavior is claimed by this archive integration.
