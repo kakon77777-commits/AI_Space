@@ -16,11 +16,11 @@ GitHub stores immutable handoff archives and verified deltas. Development does n
 | v0.1.0 | 2026-08-20 | `CoreRuntime + CoreTests + AppPatch + MvpPage + Registry + Style` | v0.0.9 | First Coherent MVP; 109/109; reload-safe 9-stage acceptance; diff=0. |
 | v0.1.1 | 2026-08-20 | `NewCoreDelta + TestsDelta + CorePatchDelta + AppPatchDelta` | v0.1.0 | MVP Hardening / Audit; 120/120; deliberate-corruption recovery acceptance; 120-file FULL manifest; diff=0. |
 | v0.1.2 | 2026-08-20 | `CoreDelta + TestsDelta + BackupPageDelta + CorePatchDelta + AppPatchDelta + SurfacePatchDelta` | v0.1.1 | Persistence Portability; 130/130; 128-file FULL manifest; full coherent bundle round-trip; diff=0. |
-| **v0.1.3** | **2026-08-20** | `NewCoreDelta + TestsDelta + CorePatchDelta + AppPatchDelta + BackupPageDelta + StylePatchDelta` | v0.1.2 | **State Authority Contract + Migration Planner**; 146/146 core tests; offline TypeScript 0 diagnostics; 138-file immutable FULL manifest; clean-extract verifier/tests/typecheck PASS; schema 1.0 compatibility + schema 1.1 authority metadata; pure eight-relation planner; safe apply restricted to bootstrap/direct fast-forward; authority-commit rollback PASS; two-target A rev1→B bootstrap→A rev2→B fast-forward acceptance remains 9/9 coherent with hardening audit 0 errors; six-part reconstruction `app/ diff=0`. |
+| **v0.1.3** | **2026-08-20** | `FULL ZIP + NewCoreDelta + TestsDelta + CorePatchDelta + AppPatchDelta + BackupPageDelta + StylePatchDelta` | v0.1.2 | **State Authority Contract + Migration Planner**; 146/146 core tests; offline TypeScript 0 diagnostics; 138-file immutable FULL manifest; clean-extract verifier/tests/typecheck PASS; schema 1.0 compatibility + schema 1.1 authority metadata; pure eight-relation planner; safe apply restricted to bootstrap/direct fast-forward; authority-commit rollback PASS; two-target A rev1→B bootstrap→A rev2→B fast-forward acceptance remains 9/9 coherent with hardening audit 0 errors; six-part reconstruction `app/ diff=0`. |
 
-## Preserved historical FULL ZIPs
+## Preserved FULL ZIPs
 
-These are byte-identical copies of the owner-provided local FULL snapshots. Each ZIP's internal `CHECKSUMS.sha256` was checked against every payload file before publication. They are preservation artifacts, not a replacement for the current v0.1.3 authority handoff.
+These are byte-identical copies of the owner-provided local FULL snapshots. Each ZIP's internal `CHECKSUMS.sha256` was checked against every payload file before publication. v0.0.1 through v0.1.2 are historical preservation artifacts; v0.1.3 is the current authority handoff.
 
 | Version | Artifact | Bytes | SHA-256 |
 |---|---|---:|---|
@@ -36,6 +36,7 @@ These are byte-identical copies of the owner-provided local FULL snapshots. Each
 | v0.1.0 | [`snapshots/full/AI_Space_v0.1.0.zip`](snapshots/full/AI_Space_v0.1.0.zip) | 214,597 | `3d2b7276eecac6562d54e4de48e252461655ab98393dcfdb81c8cc956815a676` |
 | v0.1.1 | [`snapshots/full/AI_Space_v0.1.1.zip`](snapshots/full/AI_Space_v0.1.1.zip) | 215,335 | `f918aa33a9cb3c52acec6a5e7e101184da337ed85b7e3b65198288bfa5e1b031` |
 | v0.1.2 | [`snapshots/full/AI_Space_v0.1.2.zip`](snapshots/full/AI_Space_v0.1.2.zip) | 242,610 | `8c79a82f58199ce8222b6073c2159b7cb8d5407770881e329bb0c810462dd9a7` |
+| **v0.1.3** | [`snapshots/full/AI_Space_v0.1.3.zip`](snapshots/full/AI_Space_v0.1.3.zip) | 250,874 | `ab05718f118e968a4b3637f955ad69a04b000c1ba02c6b8fa702783a901c74b4` |
 
 ## Preserved research source
 
@@ -68,4 +69,4 @@ tar -xJf snapshots/AI_Space_v0.1.3_StylePatchDelta.tar.xz --strip-components=1 -
 
 That exact reconstruction was fresh-verified against the delivered v0.1.3 runnable `app/`; result: `diff=0`.
 
-The evidence-complete v0.1.3 FULL ZIP is delivered separately in its development round and is intentionally not expanded into this repository. Production reachability and Vite build remain unverified in the DNS-restricted build container.
+The evidence-complete owner-provided v0.1.3 FULL ZIP is preserved at `snapshots/full/AI_Space_v0.1.3.zip` and is intentionally not expanded into this repository. The six deltas remain as independent reconstruction-equivalence evidence. Production reachability and the Vite build remain unverified in the original DNS-restricted build container.
