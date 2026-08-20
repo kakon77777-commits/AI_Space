@@ -31,6 +31,16 @@ Key properties:
 - explicit destructive replace remains available as a separate escape hatch and updates/clears authority metadata consistently;
 - the two-target acceptance proves A rev1 → B bootstrap → A rev2 → B direct fast-forward, then recreates all B stores and requires both Journeys to remain 9/9 coherent with hardening audit 0 errors.
 
+## Preservation lanes
+
+The current authority and the preservation archive are deliberately separate:
+
+- **Current authority:** v0.1.3 remains the latest authoritative handoff and reconstruction target.
+- **Historical FULL snapshots:** owner-provided v0.0.1 through v0.1.2 ZIPs are preserved byte-for-byte under [`snapshots/full/`](snapshots/full/).
+- **Research-source archive:** conceptual and experimental inputs are preserved under [`snapshots/research/`](snapshots/research/) without promoting them into the runtime or release line.
+- **Evidence index:** [`ARCHIVE_INVENTORY.md`](ARCHIVE_INVENTORY.md) records exact sizes, SHA-256 digests, and verification boundaries.
+- **Local stewardship:** [`LOCAL_STEWARD.md`](LOCAL_STEWARD.md) records the bounded local steward role held by 棲衡 (Qiheng).
+
 ## Reconstruct v0.1.3
 
 First reconstruct v0.1.2 using `SNAPSHOTS.md`, then:

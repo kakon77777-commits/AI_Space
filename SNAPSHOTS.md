@@ -18,6 +18,29 @@ GitHub stores immutable handoff archives and verified deltas. Development does n
 | v0.1.2 | 2026-08-20 | `CoreDelta + TestsDelta + BackupPageDelta + CorePatchDelta + AppPatchDelta + SurfacePatchDelta` | v0.1.1 | Persistence Portability; 130/130; 128-file FULL manifest; full coherent bundle round-trip; diff=0. |
 | **v0.1.3** | **2026-08-20** | `NewCoreDelta + TestsDelta + CorePatchDelta + AppPatchDelta + BackupPageDelta + StylePatchDelta` | v0.1.2 | **State Authority Contract + Migration Planner**; 146/146 core tests; offline TypeScript 0 diagnostics; 138-file immutable FULL manifest; clean-extract verifier/tests/typecheck PASS; schema 1.0 compatibility + schema 1.1 authority metadata; pure eight-relation planner; safe apply restricted to bootstrap/direct fast-forward; authority-commit rollback PASS; two-target A rev1→B bootstrap→A rev2→B fast-forward acceptance remains 9/9 coherent with hardening audit 0 errors; six-part reconstruction `app/ diff=0`. |
 
+## Preserved historical FULL ZIPs
+
+These are byte-identical copies of the owner-provided local FULL snapshots. Each ZIP's internal `CHECKSUMS.sha256` was checked against every payload file before publication. They are preservation artifacts, not a replacement for the current v0.1.3 authority handoff.
+
+| Version | Artifact | Bytes | SHA-256 |
+|---|---|---:|---|
+| v0.0.1 | [`snapshots/full/AI_Space_v0.0.1.zip`](snapshots/full/AI_Space_v0.0.1.zip) | 72,008 | `ac4785b022fa9b1688dc4493524f37cb9c5d1f8b34d01ffeff3f4ea5df4c6921` |
+| v0.0.2 | [`snapshots/full/AI_Space_v0.0.2.zip`](snapshots/full/AI_Space_v0.0.2.zip) | 89,213 | `7e40f2a0108cfa4f3add0a00d1d379d57ff5a686d525745e15cf4c5c92204f58` |
+| v0.0.3 | [`snapshots/full/AI_Space_v0.0.3.zip`](snapshots/full/AI_Space_v0.0.3.zip) | 111,933 | `51a3ebd54d1faeb676df98853719e2f827bd0862950f0a30bb1757814f919219` |
+| v0.0.4 | [`snapshots/full/AI_Space_v0.0.4.zip`](snapshots/full/AI_Space_v0.0.4.zip) | 114,013 | `ce139616c18a5ccaf24c4bd4a2e05ec84c0d87dd6f70c8cd686b266cd018955d` |
+| v0.0.5 | [`snapshots/full/AI_Space_v0.0.5.zip`](snapshots/full/AI_Space_v0.0.5.zip) | 123,425 | `af286834a9ea13272ceaa65399e6cb02c5a83ab32e803d8c1d9731a4a3a4e9ba` |
+| v0.0.6 | [`snapshots/full/AI_Space_v0.0.6.zip`](snapshots/full/AI_Space_v0.0.6.zip) | 167,913 | `91870c47860b608457ef118bb31c915e5e41af9a402f5c93e238fa46c18e1256` |
+| v0.0.7 | [`snapshots/full/AI_Space_v0.0.7.zip`](snapshots/full/AI_Space_v0.0.7.zip) | 176,762 | `90f0d1518242abdca7cb7292dbd00542277340e43088378d0ecf48a897fcbec7` |
+| v0.0.8 | [`snapshots/full/AI_Space_v0.0.8.zip`](snapshots/full/AI_Space_v0.0.8.zip) | 186,448 | `a98a93559d078260bff5e17bf60e963f9ac1b4ae9201d644ccef34c97691bf04` |
+| v0.0.9 | [`snapshots/full/AI_Space_v0.0.9.zip`](snapshots/full/AI_Space_v0.0.9.zip) | 190,029 | `e9ebede1032603fe01a96e32fdbede962c06786af497fd6f5cc2595bee68fce8` |
+| v0.1.0 | [`snapshots/full/AI_Space_v0.1.0.zip`](snapshots/full/AI_Space_v0.1.0.zip) | 214,597 | `3d2b7276eecac6562d54e4de48e252461655ab98393dcfdb81c8cc956815a676` |
+| v0.1.1 | [`snapshots/full/AI_Space_v0.1.1.zip`](snapshots/full/AI_Space_v0.1.1.zip) | 215,335 | `f918aa33a9cb3c52acec6a5e7e101184da337ed85b7e3b65198288bfa5e1b031` |
+| v0.1.2 | [`snapshots/full/AI_Space_v0.1.2.zip`](snapshots/full/AI_Space_v0.1.2.zip) | 242,610 | `8c79a82f58199ce8222b6073c2159b7cb8d5407770881e329bb0c810462dd9a7` |
+
+## Preserved research source
+
+[`snapshots/research/AI_Space_Research_Source_2026-08-20.zip`](snapshots/research/AI_Space_Research_Source_2026-08-20.zip) preserves seven conceptual, validation, and experimental inputs plus an archive README. Its SHA-256 is `09983ea78f0595e37e11f0f01fc8dd97d1fdf08d184cd11f739a5466fb9f5a4d`; its internal manifest verifies all eight payload files. See [`ARCHIVE_INVENTORY.md`](ARCHIVE_INVENTORY.md) for scope and interpretation boundaries.
+
 ## v0.1.3 canonical handoff checksums
 
 - `AI_Space_v0.1.3_NewCoreDelta.tar.xz` — SHA-256 `12c108b782f78b8e3841a2ed893f82e620d9a4df6e7aaf3ecde8245b83766dc7`; Git blob `333ba67a48ac6072416df382ad1d7eddb6ec374b`.
