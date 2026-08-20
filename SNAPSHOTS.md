@@ -15,33 +15,34 @@ GitHub stores immutable handoff archives and verified deltas. Development does n
 | v0.0.9 | 2026-08-20 | `Core + AppLogic + Registry + SpacesPage + ProjectionShell + Style` | v0.0.8 | Shared Space Context; 96/96; diff=0. |
 | v0.1.0 | 2026-08-20 | `CoreRuntime + CoreTests + AppPatch + MvpPage + Registry + Style` | v0.0.9 | First Coherent MVP; 109/109; reload-safe 9-stage acceptance; diff=0. |
 | v0.1.1 | 2026-08-20 | `NewCoreDelta + TestsDelta + CorePatchDelta + AppPatchDelta` | v0.1.0 | MVP Hardening / Audit; 120/120; deliberate-corruption recovery acceptance; 120-file FULL manifest; diff=0. |
-| **v0.1.2** | **2026-08-20** | `CoreDelta + TestsDelta + BackupPageDelta + CorePatchDelta + AppPatchDelta + SurfacePatchDelta` | v0.1.1 | **Persistence Portability / Backup–Restore Gate**; 130/130 core tests; offline TypeScript 0 diagnostics; 128-file immutable FULL manifest; clean-extract verifier/tests/typecheck PASS; complete MVP Journey bundle round-trip into fresh storage remains 9/9 coherent with hardening audit 0 errors; staged restore audit, unrelated-key preservation, dry-run no-side-effect and rollback-on-write-failure PASS; v0.1.1 + six-part handoff reconstruction `app/ diff=0`. |
+| v0.1.2 | 2026-08-20 | `CoreDelta + TestsDelta + BackupPageDelta + CorePatchDelta + AppPatchDelta + SurfacePatchDelta` | v0.1.1 | Persistence Portability; 130/130; 128-file FULL manifest; full coherent bundle round-trip; diff=0. |
+| **v0.1.3** | **2026-08-20** | `NewCoreDelta + TestsDelta + CorePatchDelta + AppPatchDelta + BackupPageDelta + StylePatchDelta` | v0.1.2 | **State Authority Contract + Migration Planner**; 146/146 core tests; offline TypeScript 0 diagnostics; 138-file immutable FULL manifest; clean-extract verifier/tests/typecheck PASS; schema 1.0 compatibility + schema 1.1 authority metadata; pure eight-relation planner; safe apply restricted to bootstrap/direct fast-forward; authority-commit rollback PASS; two-target A rev1→B bootstrap→A rev2→B fast-forward acceptance remains 9/9 coherent with hardening audit 0 errors; six-part reconstruction `app/ diff=0`. |
 
-## v0.1.2 canonical handoff checksums
+## v0.1.3 canonical handoff checksums
 
-- `AI_Space_v0.1.2_CoreDelta.tar.xz` — SHA-256 `4183f2e709b8471514036798eaf6102d57da286eb4183d2675ddb9177420dfd6`; Git blob `31d69e00dbf9d285d5f9e85ed001f0b35241144f`.
-- `AI_Space_v0.1.2_TestsDelta.tar.xz` — SHA-256 `214059b29985885b0eab0735618a5f210a4368e14ef810f2b47ecc8a5751ca54`; Git blob `cf8b5c0bc20d6ffa8032723cc606382a4bb2ea25`.
-- `AI_Space_v0.1.2_BackupPageDelta.tar.xz` — SHA-256 `51b97f2d65bad014f7d8614817949d40904ccee1b6c3c64aa4d884e1b2f66ae5`; Git blob `11ea01a8c5c7deaba86f34d27d1998c77d845388`.
-- `AI_Space_v0.1.2_CorePatchDelta.tar.xz` — SHA-256 `9f67994ec5fc6312f89446c9caea8a57155476d144f4c22ac350516be4061f4d`; Git blob `73c3b8323261ee3193b9f5c90f968682b569542f`.
-- `AI_Space_v0.1.2_AppPatchDelta.tar.xz` — SHA-256 `db21fb20df23edac6600d09b367b8a95f3258b746c9411594627321457511c09`; Git blob `fe8c5c84867c1c773882325bcddf333af72eccf8`.
-- `AI_Space_v0.1.2_SurfacePatchDelta.tar.xz` — SHA-256 `dd715c6d21958ae95e91bfdd691b994f12791a05e2adc10556c9391f4dd33268`; Git blob `8e57a47dbb99b4fde24291fe7c1ae65d032e4bd3`.
+- `AI_Space_v0.1.3_NewCoreDelta.tar.xz` — SHA-256 `12c108b782f78b8e3841a2ed893f82e620d9a4df6e7aaf3ecde8245b83766dc7`; Git blob `333ba67a48ac6072416df382ad1d7eddb6ec374b`.
+- `AI_Space_v0.1.3_TestsDelta.tar.xz` — SHA-256 `4a56ce25d66634270e01f3f35b93516670ec6a93b7be0fcfdc8050fe554f934c`; Git blob `bfdebe73187b90038088595200cb253a10698a2b`.
+- `AI_Space_v0.1.3_CorePatchDelta.tar.xz` — SHA-256 `f15294b959ec243c65124b01b9c89b6e21b9af5af8d2279f01efe89b417381fa`; Git blob `b5e8a89633ac133d26f4943a6104507948968dcb`.
+- `AI_Space_v0.1.3_AppPatchDelta.tar.xz` — SHA-256 `d29b60cdef09567f195f47027b7fcadc3c5ed42eb2cf4ebc110cbd72d0e27a5b`; Git blob `c88979323c6ccfca08b840f73ceda432350586dc`.
+- `AI_Space_v0.1.3_BackupPageDelta.tar.xz` — SHA-256 `b19546de968b2129d58ee2012e247217bf81d268675243a7aafb8f8d0789aa73`; Git blob `5e1231e6aed3203440077be664e68589c1c98869`.
+- `AI_Space_v0.1.3_StylePatchDelta.tar.xz` — SHA-256 `d95b1dba2e05089da63060e5dd9629715c6618040ed1793ed447293583d8ec8d`; Git blob `5fed0da6ac49f7f1c0e4ccc1d0f3ebe87681643d`.
 
-## Reconstruct latest v0.1.2
+## Reconstruct latest v0.1.3
 
-First reconstruct v0.1.1 in version order, then:
+First reconstruct v0.1.2 in version order, then:
 
 ```bash
-tar -xJf snapshots/AI_Space_v0.1.2_CoreDelta.tar.xz --strip-components=1 -C <project-root>
-tar -xJf snapshots/AI_Space_v0.1.2_TestsDelta.tar.xz --strip-components=1 -C <project-root>
-tar -xJf snapshots/AI_Space_v0.1.2_BackupPageDelta.tar.xz --strip-components=1 -C <project-root>
-tar -xJf snapshots/AI_Space_v0.1.2_CorePatchDelta.tar.xz --strip-components=1 -C <project-root>
-(cd <project-root> && patch --batch -p0 < patches/types.patch)
-tar -xJf snapshots/AI_Space_v0.1.2_AppPatchDelta.tar.xz --strip-components=1 -C <project-root>
-(cd <project-root> && patch --batch -p0 < patches/App.tsx.patch)
-tar -xJf snapshots/AI_Space_v0.1.2_SurfacePatchDelta.tar.xz --strip-components=1 -C <project-root>
-(cd <project-root> && patch --batch -p0 < patches/surface.patch)
+tar -xJf snapshots/AI_Space_v0.1.3_NewCoreDelta.tar.xz --strip-components=1 -C <project-root>
+tar -xJf snapshots/AI_Space_v0.1.3_TestsDelta.tar.xz --strip-components=1 -C <project-root>
+tar -xJf snapshots/AI_Space_v0.1.3_BackupPageDelta.tar.xz --strip-components=1 -C <project-root>
+tar -xJf snapshots/AI_Space_v0.1.3_CorePatchDelta.tar.xz --strip-components=1 -C <project-root>
+(cd <project-root> && patch --batch -p0 < patches/core.patch)
+tar -xJf snapshots/AI_Space_v0.1.3_AppPatchDelta.tar.xz --strip-components=1 -C <project-root>
+(cd <project-root> && patch --batch -p0 < patches/app.patch)
+tar -xJf snapshots/AI_Space_v0.1.3_StylePatchDelta.tar.xz --strip-components=1 -C <project-root>
+(cd <project-root> && patch --batch -p0 < patches/style.patch)
 ```
 
-That exact reconstruction was fresh-verified against the delivered v0.1.2 runnable `app/`; result: `diff=0`.
+That exact reconstruction was fresh-verified against the delivered v0.1.3 runnable `app/`; result: `diff=0`.
 
-The evidence-complete v0.1.2 FULL ZIP is delivered separately in its development round and is intentionally not expanded into this repository. Production reachability and Vite build remain unverified in the DNS-restricted build container.
+The evidence-complete v0.1.3 FULL ZIP is delivered separately in its development round and is intentionally not expanded into this repository. Production reachability and Vite build remain unverified in the DNS-restricted build container.
