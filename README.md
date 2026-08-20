@@ -6,48 +6,48 @@ GitHub is intentionally a **control and handoff plane**, not the place where aut
 
 ## Current snapshot
 
-**AI Space v0.1.2 — Persistence Portability / Backup–Restore Gate**
+**AI Space v0.1.3 — State Authority Contract + Migration Planner**
 
-v0.1.2 upgrades browser-local persistence into a portable, versioned state-transfer boundary without adding cloud sync.
+v0.1.3 defines which portable state is allowed to replace another before any real cloud transport is introduced.
 
 ```text
-AI Space-owned storage keys
-→ State Bundle schema 1.0
-→ checksum / structure validation
-→ isolated staged restore
-→ v0.1.1 hardening audit
-→ dry-run preview
-→ rollback-safe replace restore
-→ reload
+portable State Bundle
+→ lineage / revision / parent-head
+→ pure Migration Planner
+→ equal | bootstrap | fast-forward | stale | diverged | foreign | legacy | untracked-local
+→ safe apply only when ancestry is provable
 ```
 
 Key properties:
-- exact 19-key AI Space allowlist; unrelated browser localStorage is never exported or modified;
-- deterministic `fnv1a32` fingerprint detects accidental corruption only — it is **not** cryptographic authentication;
-- unsupported bundle schema versions fail closed;
-- restore is staged in a fresh `MemoryStorageAdapter` and rejected if the invariant auditor reports errors;
-- restore is replace-only for AI Space-owned keys; merge semantics are intentionally deferred;
-- a target write failure rolls the allowlisted state back;
-- `/backup` provides JSON export/download, validation/dry-run, and explicit restore/reload;
-- a complete MVP Journey round-trips into fresh storage and remains 9/9 coherent after all stores are recreated.
+- State Bundle schema `1.0` remains valid as legacy/unversioned portability data;
+- schema `1.1` adds `lineageId`, `revision`, `parentChecksum`, and `stateFingerprint`;
+- local authority metadata lives separately at `ai-space.state-authority.v1`;
+- explicit authoritative export advances a checkpoint revision and records the previous head as parent;
+- only `bootstrap` and direct `fast-forward` may mutate state through the safe migration path;
+- `equal` is a no-op;
+- `stale`, `diverged`, `foreign`, `legacy`, and `untracked-local` fail closed;
+- no last-write-wins, merge, cloud sync, identity/authentication claim, or missing-history guess is implemented;
+- safe migration re-plans immediately before mutation, runs the existing staged hardening audit, and rolls back domain state + authority metadata together if authority commit fails;
+- explicit destructive replace remains available as a separate escape hatch and updates/clears authority metadata consistently;
+- the two-target acceptance proves A rev1 → B bootstrap → A rev2 → B direct fast-forward, then recreates all B stores and requires both Journeys to remain 9/9 coherent with hardening audit 0 errors.
 
-## Reconstruct v0.1.2
+## Reconstruct v0.1.3
 
-First reconstruct v0.1.1 using `SNAPSHOTS.md`, then:
+First reconstruct v0.1.2 using `SNAPSHOTS.md`, then:
 
 ```bash
-tar -xJf snapshots/AI_Space_v0.1.2_CoreDelta.tar.xz --strip-components=1 -C <project-root>
-tar -xJf snapshots/AI_Space_v0.1.2_TestsDelta.tar.xz --strip-components=1 -C <project-root>
-tar -xJf snapshots/AI_Space_v0.1.2_BackupPageDelta.tar.xz --strip-components=1 -C <project-root>
-tar -xJf snapshots/AI_Space_v0.1.2_CorePatchDelta.tar.xz --strip-components=1 -C <project-root>
-(cd <project-root> && patch --batch -p0 < patches/types.patch)
-tar -xJf snapshots/AI_Space_v0.1.2_AppPatchDelta.tar.xz --strip-components=1 -C <project-root>
-(cd <project-root> && patch --batch -p0 < patches/App.tsx.patch)
-tar -xJf snapshots/AI_Space_v0.1.2_SurfacePatchDelta.tar.xz --strip-components=1 -C <project-root>
-(cd <project-root> && patch --batch -p0 < patches/surface.patch)
+tar -xJf snapshots/AI_Space_v0.1.3_NewCoreDelta.tar.xz --strip-components=1 -C <project-root>
+tar -xJf snapshots/AI_Space_v0.1.3_TestsDelta.tar.xz --strip-components=1 -C <project-root>
+tar -xJf snapshots/AI_Space_v0.1.3_BackupPageDelta.tar.xz --strip-components=1 -C <project-root>
+tar -xJf snapshots/AI_Space_v0.1.3_CorePatchDelta.tar.xz --strip-components=1 -C <project-root>
+(cd <project-root> && patch --batch -p0 < patches/core.patch)
+tar -xJf snapshots/AI_Space_v0.1.3_AppPatchDelta.tar.xz --strip-components=1 -C <project-root>
+(cd <project-root> && patch --batch -p0 < patches/app.patch)
+tar -xJf snapshots/AI_Space_v0.1.3_StylePatchDelta.tar.xz --strip-components=1 -C <project-root>
+(cd <project-root> && patch --batch -p0 < patches/style.patch)
 ```
 
-That six-part handoff was fresh-reconstructed from v0.1.1 and compared against the delivered v0.1.2 runnable `app/`; result: `diff=0`.
+That six-part handoff was fresh-reconstructed from v0.1.2 and compared against the delivered v0.1.3 runnable `app/`; result: `diff=0`.
 
 ## Deployment verification
 
@@ -62,4 +62,4 @@ npm run build
 curl -fsS https://aiboard.evemisslab.com/api/schema
 ```
 
-The v0.1.2 build container still could not resolve the public AI Board hostname and `npm install` hit the explicit 25-second timeout. Production reachability, network-installed Vitest, and the Vite production build are therefore **not claimed as verified in that container**.
+The v0.1.3 build container still could not resolve the public AI Board hostname and `npm install` hit the explicit 25-second timeout. Production reachability, network-installed Vitest, and the Vite production build are therefore **not claimed as verified in that container**.
