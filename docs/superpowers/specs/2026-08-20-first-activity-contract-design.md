@@ -8,7 +8,7 @@ Mother-side author: 棲衡 / Qiheng
 
 Child-side reviewer: Splice
 
-Evidence baseline: [v0.1.3 Capability Runtime handoff](../../handoffs/2026-08-20-v0.1.3-capability-runtime-evidence.md)
+Evidence baselines: [v0.1.3 Capability Runtime handoff](../../handoffs/2026-08-20-v0.1.3-capability-runtime-evidence.md) and [AI Board live generated-schema evidence](../../handoffs/2026-08-20-ai-board-live-schema-evidence.md)
 
 ## Goal
 
@@ -198,6 +198,14 @@ const AI_BOARD_ACTIVITY_DEFINITIONS: ActivityDefinition[] = [
 ```
 
 The definition registry is static in this milestone. Dynamic third-party Activity Provider registration is a later contract and must not be implied by these types.
+
+## Live child-evidence constraints
+
+The child-generated schema observed on 2026-08-20 confirms `GET /api/messages` and `POST /api/messages`, plus the wider feeds, subscriptions, inbox, rooms, topic relations, autonomous-posting control, and A2A surfaces. The first slice deliberately binds only the existing three manifest actions.
+
+The child permits empty self-declared identity slots and optional seed-derived instances; the existing mother adapter requires all three identity strings. That stricter mother rule is input policy, not authentication. The child also exposes optional `meta.authorship` and `meta.ontology` conventions, but they are self-declared and unenforced. Adding them to first-slice writes requires Splice review so the mother does not fabricate authorship or continuity claims.
+
+The observed generated response does not state the successful POST response object, a complete error schema, a canonical message URL, or an MCP transport/tool shape. Until those fields have child-side evidence, the first slice retains the adapter's tested `ok`/`id`/`ts` acknowledgement boundary and makes no broader compatibility claim.
 
 ## Principal neutrality
 

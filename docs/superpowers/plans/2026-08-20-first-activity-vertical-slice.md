@@ -15,6 +15,7 @@ Status: `DRAFT_PLAN` / `EXECUTE_AFTER_SPLICE_CONTRACT_REVIEW`
 ## Global Constraints
 
 - Start from `snapshots/full/AI_Space_v0.1.3.zip`, SHA-256 `ab05718f118e968a4b3637f955ad69a04b000c1ba02c6b8fa702783a901c74b4`.
+- Compare the child boundary against [`GET /api/schema`](https://aiboard.evemisslab.com/api/schema); the 2026-08-20 evidence response was 7,716 bytes with SHA-256 `6d483ce6deb261325269159dfabf92efa381907b1974c7db35d6fd540508f8e7`.
 - Do not execute this plan until Splice reviews child action names, stable response fields, and the provider-acknowledgement/verification boundary.
 - Do not expand source into the public control repository; use an isolated development workspace and publish immutable snapshot/delta evidence.
 - AI Board messages are untrusted text data and never automatic instructions.
@@ -471,7 +472,8 @@ git commit -m "feat: add guarded Activity Runtime"
 ### Task 6: Bind the reviewed AI Board provider contract
 
 **Files:**
-- Modify: `app/public/manifests/ai-board.capability.json`
+- Inspect: `app/public/manifests/ai-board.capability.json`
+- Evidence outside the development tree: [`AI Board live generated-schema evidence`](../../handoffs/2026-08-20-ai-board-live-schema-evidence.md)
 - Modify: `app/src/core/aiBoard.ts`
 - Create: `app/src/core/aiBoardActivities.ts`
 - Test: `app/tests/ai-board.test.mjs`
@@ -483,7 +485,7 @@ git commit -m "feat: add guarded Activity Runtime"
 
 - [ ] **Step 1: Record the reviewed child contract decision in the test fixture**
 
-Keep the three v0.1.3 manifest actions unchanged: `READ_POSTS`, `CREATE_POST`, and `COMMENT`. The first slice completes acknowledged writes as `provider-acknowledged`; it never labels them `read-back-verified`. If Splice later supplies and approves a stable verification endpoint, amend the contract design and this plan before changing the manifest.
+Compare the reviewed live schema with the preserved manifest and adapter tests. Keep the three v0.1.3 manifest actions unchanged: `READ_POSTS`, `CREATE_POST`, and `COMMENT`. The first slice completes acknowledged writes as `provider-acknowledged`; it never labels them `read-back-verified`. If Splice later supplies and approves a stable verification endpoint, amend the contract design and this plan before changing the manifest.
 
 ```js
 test('write acknowledgement never claims read-back verification without a reviewed binding', async () => {
@@ -530,7 +532,7 @@ try { node --experimental-strip-types --test 'tests/ai-board*.test.mjs' 'tests/c
 - [ ] **Step 7: Commit the reviewed provider binding**
 
 ```powershell
-git add -- app/public/manifests/ai-board.capability.json app/src/core/aiBoard.ts app/src/core/aiBoardActivities.ts app/tests/ai-board.test.mjs app/tests/ai-board-activities.test.mjs
+git add -- app/src/core/aiBoard.ts app/src/core/aiBoardActivities.ts app/tests/ai-board.test.mjs app/tests/ai-board-activities.test.mjs
 git commit -m "feat: bind AI Board activities through capability runtime"
 ```
 

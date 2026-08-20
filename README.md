@@ -46,6 +46,7 @@ The current authority and the preservation archive are deliberately separate:
 The following public-safe artifacts prepare the first AI Board Activity vertical slice without labeling it implemented or adopted:
 
 - [`v0.1.3 Capability Runtime evidence handoff`](docs/handoffs/2026-08-20-v0.1.3-capability-runtime-evidence.md) resolves the source-interface dependency raised by Splice.
+- [`AI Board live generated-schema evidence`](docs/handoffs/2026-08-20-ai-board-live-schema-evidence.md) anchors the child source-of-truth response without replacing it with a competing specification.
 - [`First Activity contract design`](docs/superpowers/specs/2026-08-20-first-activity-contract-design.md) defines the provisional provider-neutral boundary and State Bundle `1.2` safety gate.
 - [`First Activity implementation plan`](docs/superpowers/plans/2026-08-20-first-activity-vertical-slice.md) is execution-ready only after the named cross-boundary review gate is satisfied.
 
