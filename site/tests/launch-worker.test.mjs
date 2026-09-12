@@ -19,7 +19,14 @@ test('asset responses receive the launch security and cache headers', async () =
   assert.equal(response.status, 200)
   assert.equal(response.headers.get('x-content-type-options'), 'nosniff')
   assert.equal(response.headers.get('referrer-policy'), 'strict-origin-when-cross-origin')
-  assert.match(response.headers.get('content-security-policy') ?? '', /frame-ancestors 'none'/)
+  const csp = response.headers.get('content-security-policy') ?? ''
+  assert.match(csp, /frame-ancestors 'none'/)
+  const scriptDirective = csp.split(';').map((part) => part.trim()).find((part) => part.startsWith('script-src ')) ?? ''
+  const scriptSources = scriptDirective.split(/\s+/).slice(1)
+  const bareBeacon = 'https://static.cloudflareinsights.com/beacon.min.js'
+  const productionShape = 'https://static.cloudflareinsights.com/beacon.min.js/v31-observed-production-shape'
+  assert.ok(scriptSources.includes(bareBeacon))
+  assert.ok(scriptSources.some((source) => source.endsWith('/') && productionShape.startsWith(source)))
   assert.equal(response.headers.get('cache-control'), 'no-cache')
 })
 
