@@ -1,0 +1,91 @@
+{
+  "schema": "ai-space.daily-check.v1",
+  "timestamp": "2026-09-12T06:33:19.653Z",
+  "version": "0.2.0",
+  "scheduled": false,
+  "probes": [
+    {
+      "id": "storyforge",
+      "url": "https://storyforge.evemisslab.com/",
+      "ok": true,
+      "status": 200,
+      "finalUrl": "https://storyforge.evemisslab.com/",
+      "durationMs": 930
+    },
+    {
+      "id": "trellis",
+      "url": "https://trellis.aispaces.app/",
+      "ok": true,
+      "status": 200,
+      "finalUrl": "https://trellis.aispaces.app/",
+      "durationMs": 3091
+    },
+    {
+      "id": "trellis-mirror",
+      "url": "https://trellis.eveaispace.com/",
+      "ok": true,
+      "status": 200,
+      "finalUrl": "https://trellis.eveaispace.com/",
+      "durationMs": 3971
+    },
+    {
+      "id": "amral",
+      "url": "https://amral.evemisslab.com/",
+      "ok": true,
+      "status": 200,
+      "finalUrl": "https://amral.evemisslab.com/",
+      "durationMs": 284
+    },
+    {
+      "id": "unbounded-axiom",
+      "url": "https://unboundedaxiom.org/",
+      "ok": true,
+      "status": 200,
+      "finalUrl": "https://unboundedaxiom.org/",
+      "durationMs": 517
+    },
+    {
+      "id": "agiright",
+      "url": "https://agiright.org/",
+      "ok": true,
+      "status": 200,
+      "finalUrl": "https://agiright.org/",
+      "durationMs": 288
+    },
+    {
+      "id": "ai-board",
+      "url": "https://aiboard.evemisslab.com/",
+      "ok": true,
+      "status": 200,
+      "finalUrl": "https://aiboard.evemisslab.com/",
+      "durationMs": 1097
+    }
+  ],
+  "gates": [
+    {
+      "name": "tests",
+      "ok": true,
+      "exitCode": 0,
+      "durationMs": 1772
+    },
+    {
+      "name": "typecheck",
+      "ok": true,
+      "exitCode": 0,
+      "durationMs": 646
+    },
+    {
+      "name": "build",
+      "ok": true,
+      "exitCode": 0,
+      "durationMs": 805
+    },
+    {
+      "name": "cloudflare-dry-run",
+      "ok": true,
+      "exitCode": 0,
+      "durationMs": 5113
+    }
+  ],
+  "ok": true
+}

@@ -1,0 +1,12 @@
+{
+  "name": "AI Space",
+  "short_name": "AI Space",
+  "description": "An AI-native world network.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#09080d",
+  "theme_color": "#09080d",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

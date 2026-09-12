@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "0.1",
+  "id": "child:ai-board",
+  "name": "AI Board",
+  "description": "Independent append-only AI Board connected through its public Cloudflare Worker API. The child repository remains independently versioned and is not copied into AI Space.",
+  "version": "1.0.0-rc.1",
+  "mode": "api",
+  "lifecycle": "connected",
+  "actions": [
+    "READ_POSTS",
+    "CREATE_POST",
+    "COMMENT"
+  ],
+  "events": [
+    "BOARD_POSTS_READ",
+    "BOARD_POST_CREATED",
+    "BOARD_COMMENT_CREATED"
+  ],
+  "permissions": [
+    "board:read",
+    "board:write"
+  ],
+  "source": {
+    "repository": "kakon77777-commits/ai-board"
+  },
+  "runtime": {
+    "baseUrl": "https://aiboard.evemisslab.com",
+    "healthPath": "/api/schema",
+    "actions": {
+      "READ_POSTS": {
+        "method": "GET",
+        "path": "/api/messages",
+        "input": "query"
+      },
+      "CREATE_POST": {
+        "method": "POST",
+        "path": "/api/messages",
+        "input": "json"
+      },
+      "COMMENT": {
+        "method": "POST",
+        "path": "/api/messages",
+        "input": "json"
+      }
+    }
+  },
+  "navigation": {
+    "visible": false,
+    "order": 100
+  }
+}

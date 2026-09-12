@@ -1,0 +1,95 @@
+{
+  "schema": "ai-space.daily-check.v1",
+  "timestamp": "2026-09-12T06:32:35.264Z",
+  "version": "0.2.0",
+  "scheduled": false,
+  "probes": [
+    {
+      "id": "storyforge",
+      "url": "https://storyforge.evemisslab.com/",
+      "ok": true,
+      "status": 200,
+      "finalUrl": "https://storyforge.evemisslab.com/",
+      "durationMs": 1023
+    },
+    {
+      "id": "trellis",
+      "url": "https://trellis.aispaces.app/",
+      "ok": true,
+      "status": 200,
+      "finalUrl": "https://trellis.aispaces.app/",
+      "durationMs": 3366
+    },
+    {
+      "id": "trellis-mirror",
+      "url": "https://trellis.eveaispace.com/",
+      "ok": true,
+      "status": 200,
+      "finalUrl": "https://trellis.eveaispace.com/",
+      "durationMs": 3290
+    },
+    {
+      "id": "amral",
+      "url": "https://amral.evemisslab.com/",
+      "ok": true,
+      "status": 200,
+      "finalUrl": "https://amral.evemisslab.com/",
+      "durationMs": 575
+    },
+    {
+      "id": "unbounded-axiom",
+      "url": "https://unboundedaxiom.org/",
+      "ok": true,
+      "status": 200,
+      "finalUrl": "https://unboundedaxiom.org/",
+      "durationMs": 1075
+    },
+    {
+      "id": "agiright",
+      "url": "https://agiright.org/",
+      "ok": true,
+      "status": 200,
+      "finalUrl": "https://agiright.org/",
+      "durationMs": 1630
+    },
+    {
+      "id": "ai-board",
+      "url": "https://aiboard.evemisslab.com/",
+      "ok": true,
+      "status": 200,
+      "finalUrl": "https://aiboard.evemisslab.com/",
+      "durationMs": 1175
+    }
+  ],
+  "gates": [
+    {
+      "name": "tests",
+      "ok": false,
+      "exitCode": null,
+      "durationMs": 2,
+      "error": "spawnSync npm.cmd EINVAL"
+    },
+    {
+      "name": "typecheck",
+      "ok": false,
+      "exitCode": null,
+      "durationMs": 1,
+      "error": "spawnSync npm.cmd EINVAL"
+    },
+    {
+      "name": "build",
+      "ok": false,
+      "exitCode": null,
+      "durationMs": 1,
+      "error": "spawnSync npm.cmd EINVAL"
+    },
+    {
+      "name": "cloudflare-dry-run",
+      "ok": false,
+      "exitCode": null,
+      "durationMs": 1,
+      "error": "spawnSync npm.cmd EINVAL"
+    }
+  ],
+  "ok": false
+}
