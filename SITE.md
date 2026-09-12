@@ -20,6 +20,16 @@ The historical snapshots remain immutable. This branch adds a live public-site l
 
 Both domains serve the same application. `aispaces.app` is the canonical URL in page metadata. Child worlds remain independent services with separate authority boundaries.
 
+## Current production
+
+- Source commit: `d78add019bf49b7b8ec56b5cbf44113b454cda7a`
+- Worker version: `bd3a9fd2-b044-4324-943a-92447e34a80b`
+- Deployed: `2026-09-12T06:55:43Z`
+- Traffic: 100% on the version above
+- Final production daily check: `site/reports/daily/2026-09-12/2026-09-12T06-56-25-937Z.json`
+
+The default branch remains unchanged. Production was deployed from the reviewed feature-branch commit above; later evidence-only commits do not imply a new deployment.
+
 ## Local gates
 
 From `site/`:
