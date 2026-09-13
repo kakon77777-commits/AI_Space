@@ -22,11 +22,12 @@ Both domains serve the same application. `aispaces.app` is the canonical URL in 
 
 ## Current production
 
-- Source commit: `d78add019bf49b7b8ec56b5cbf44113b454cda7a`
-- Worker version: `bd3a9fd2-b044-4324-943a-92447e34a80b`
-- Deployed: `2026-09-12T06:55:43Z`
+- Source commit: `9ab52aec512c48bf096a767a5baa6ec35d6cea0f`
+- Worker version: `76321db2-77a9-41ac-8367-43b16d8c4790`
+- Deployed: `2026-09-13T06:27:53Z`
 - Traffic: 100% on the version above
-- Final production daily check: `site/reports/daily/2026-09-12/2026-09-12T06-56-25-937Z.json`
+- Candidate daily check: `site/reports/daily/2026-09-13/2026-09-13T06-26-39-075Z.json`
+- Deployment receipt: `site/reports/deployments/2026-09-13-daily.md`
 
 The default branch remains unchanged. Production was deployed from the reviewed feature-branch commit above; later evidence-only commits do not imply a new deployment.
 
