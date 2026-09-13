@@ -15,7 +15,7 @@ export type AiSpaceWorld = {
   accent: string
 }
 
-export const WORLD_CATALOG_CHECKED_AT = '2026-09-12'
+export const WORLD_CATALOG_CHECKED_AT = '2026-09-13'
 
 export const worlds: AiSpaceWorld[] = [
   {

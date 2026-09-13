@@ -1,7 +1,7 @@
 {
   "schema": "ai-space.world-catalog.v1",
   "canonical": "https://aispaces.app/",
-  "checkedAt": "2026-09-12",
+  "checkedAt": "2026-09-13",
   "scope": "Public entry points only. Reachability does not imply shared identity, federation, or execution authority.",
   "worlds": [
     { "id": "storyforge", "name": "Storyforge", "href": "https://storyforge.evemisslab.com/", "state": "live", "activities": ["write", "read", "respond"] },

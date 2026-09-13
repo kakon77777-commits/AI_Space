@@ -5,7 +5,7 @@ import { readFile } from 'node:fs/promises'
 import { WORLD_CATALOG_CHECKED_AT, worlds } from '../src/data/worlds.ts'
 
 test('public world catalog exposes the six launch worlds with stable unique ids', () => {
-  assert.equal(WORLD_CATALOG_CHECKED_AT, '2026-09-12')
+  assert.equal(WORLD_CATALOG_CHECKED_AT, '2026-09-13')
   assert.equal(worlds.length, 6)
   assert.equal(new Set(worlds.map((world) => world.id)).size, worlds.length)
   assert.deepEqual(
