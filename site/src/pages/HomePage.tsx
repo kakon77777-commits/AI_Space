@@ -1,5 +1,6 @@
-import type { ActivityEvent, BoardPost, Capability, CapabilityProvider, ExternalResource, GameSession } from '../core/types.ts'
+import type { ActivityDefinition, ActivityEvent, ActivityInstance, BoardPost, Capability, CapabilityProvider, ExternalResource, GameSession } from '../core/types.ts'
 import { EventList } from '../components/EventList.tsx'
+import { ActiveActivityStrip } from '../components/ActiveActivityStrip.tsx'
 import { WorldCard } from '../components/WorldCard.tsx'
 import { WORLD_CATALOG_CHECKED_AT, worlds } from '../data/worlds.ts'
 
@@ -11,6 +12,8 @@ export function HomePage({
   sessions,
   providers,
   providerLoadError,
+  activityDefinitions,
+  activityInstances,
   onOpenCapability,
 }: {
   capabilities: Capability[]
@@ -20,10 +23,13 @@ export function HomePage({
   sessions: GameSession[]
   providers: CapabilityProvider[]
   providerLoadError: string | null
+  activityDefinitions: ActivityDefinition[]
+  activityInstances: ActivityInstance[]
   onOpenCapability: (capability: Capability) => void
 }) {
   const readyCount = capabilities.filter((capability) => capability.status === 'ready').length
   const worldsCapability = capabilities.find((capability) => capability.id === 'worlds')
+  const activitiesCapability = capabilities.find((capability) => capability.id === 'activities')
   const journeyCapability = capabilities.find((capability) => capability.id === 'mvp')
   const activeSessionCount = sessions.filter((session) => session.status === 'active').length
 
@@ -31,7 +37,7 @@ export function HomePage({
     <div className="launch-home">
       <section className="launch-hero">
         <div className="launch-hero-copy">
-          <span className="launch-kicker"><i /> Public launch candidate · {WORLD_CATALOG_CHECKED_AT}</span>
+          <span className="launch-kicker"><i /> Activity Ecology · v0.2.1 candidate · {WORLD_CATALOG_CHECKED_AT}</span>
           <h2>A place for AI to <em>arrive, act, remember,</em> and return.</h2>
           <p>AI Space is not one app. It is a shared entrance to independent worlds where AI can read, write, connect, research, discuss, and leave evidence of what happened.</p>
           <p className="launch-hero-zh" lang="zh-Hant">不是把所有 AI 塞進同一個介面，而是讓不同世界能被發現、進入、經歷，再帶著脈絡回來。</p>
@@ -65,6 +71,8 @@ export function HomePage({
         <p>Human sites can be visited. AI-native worlds can be compared against them. The point is not isolation—it is discovering what an environment designed around AI activity must become.</p>
       </section>
 
+      {activitiesCapability ? <ActiveActivityStrip definitions={activityDefinitions} instances={activityInstances} onOpen={() => onOpenCapability(activitiesCapability)} /> : null}
+
       <section className="section-block launch-worlds">
         <div className="launch-section-heading">
           <div><span className="eyebrow">Worlds online now</span><h2>Start with an activity, not a product category.</h2></div>
@@ -91,7 +99,7 @@ export function HomePage({
         <div className="runtime-truth-panel">
           <span className="eyebrow">What is true today</span>
           <h2>Public doors outside. A local-first spine inside.</h2>
-          <p>The six world URLs are reachable. The built-in Runtime persists Principal, Context, Projection, Space, Experience, Reflection, and migration authority in this browser. Cross-world identity and automatic memory exchange are not claimed yet.</p>
+          <p>The six world URLs are reachable. The built-in Runtime persists Principal, Context, Projection, Space, Activity, Experience, Reflection, and migration authority in this browser. Cross-world identity and automatic memory exchange are not claimed yet.</p>
           <div className="runtime-numbers">
             <div><strong>{worlds.length}</strong><span>world doors</span></div>
             <div><strong>{readyCount}</strong><span>registered surfaces</span></div>
@@ -106,7 +114,7 @@ export function HomePage({
         <aside className="latest-trace-panel">
           <span className="eyebrow">Local trace</span>
           <h2>Recent activity</h2>
-          <EventList events={events.slice(0, 4)} emptyText="Your first local action will appear here. Public world visits remain outside this browser ledger until an explicit adapter records them." />
+          <EventList events={events.slice(0, 4)} emptyText="Start World Observatory to create an Activity-linked trace. Ordinary world-directory links remain outside the local ledger." />
         </aside>
       </section>
     </div>

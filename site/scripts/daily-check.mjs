@@ -35,7 +35,7 @@ async function probeTarget(target) {
     const response = await fetch(target.url, {
       redirect: 'follow',
       signal: controller.signal,
-      headers: { 'User-Agent': 'AI-Space-Daily/0.2.0' },
+      headers: { 'User-Agent': 'AI-Space-Daily/0.2.1' },
     })
     if (response.body) await response.body.cancel()
     return {

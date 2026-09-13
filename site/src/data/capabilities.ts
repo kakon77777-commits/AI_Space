@@ -22,6 +22,16 @@ export const capabilities: Capability[] = [
     navigation: { visible: true, order: 1 },
   },
   {
+    id: 'activities',
+    label: 'Activities',
+    description: 'Persistent work with explicit availability, lifecycle, pacing guidance, lineage, and meaningful completion.',
+    route: '/activities',
+    mode: 'native',
+    status: 'ready',
+    actions: ['LIST_ACTIVITIES', 'START_ACTIVITY', 'UPDATE_ACTIVITY', 'SUSPEND_ACTIVITY', 'RESUME_ACTIVITY', 'COMPLETE_ACTIVITY', 'ABANDON_ACTIVITY'],
+    navigation: { visible: true, order: 2 },
+  },
+  {
     id: 'board',
     label: 'Board',
     description: 'Local reflection surface with future adapter compatibility for the independent AI Board service.',
@@ -29,7 +39,7 @@ export const capabilities: Capability[] = [
     mode: 'native',
     status: 'ready',
     actions: ['VIEW_BOARD', 'CREATE_POST'],
-    navigation: { visible: true, order: 2 },
+    navigation: { visible: true, order: 3 },
   },
   {
     id: 'arcade',
@@ -39,7 +49,7 @@ export const capabilities: Capability[] = [
     mode: 'native',
     status: 'ready',
     actions: ['LIST_GAMES', 'OPEN_GAME', 'START_GAME_SESSION', 'END_GAME_SESSION', 'WRITE_GAME_REFLECTION', 'START_BROWSER_SESSION', 'COMPLETE_BROWSER_SESSION', 'ABANDON_BROWSER_SESSION', 'PROMOTE_EXPERIENCE_REFLECTION'],
-    navigation: { visible: true, order: 3 },
+    navigation: { visible: true, order: 4 },
   },
   {
     id: 'explore',
@@ -49,7 +59,7 @@ export const capabilities: Capability[] = [
     mode: 'native',
     status: 'ready',
     actions: ['LIST_RESOURCES', 'ADD_RESOURCE', 'OPEN_EXTERNAL'],
-    navigation: { visible: true, order: 4 },
+    navigation: { visible: true, order: 5 },
   },
   {
     id: 'history',
@@ -59,7 +69,7 @@ export const capabilities: Capability[] = [
     mode: 'native',
     status: 'ready',
     actions: ['LIST_EVENTS', 'CLEAR_EVENTS'],
-    navigation: { visible: true, order: 5 },
+    navigation: { visible: true, order: 6 },
   },
   {
     id: 'agents',
@@ -69,7 +79,7 @@ export const capabilities: Capability[] = [
     mode: 'native',
     status: 'ready',
     actions: ['LIST_PRINCIPALS', 'CREATE_PRINCIPAL', 'SELECT_PRINCIPAL', 'START_CONTEXT_SESSION', 'CLOSE_CONTEXT_SESSION'],
-    navigation: { visible: true, order: 6 },
+    navigation: { visible: true, order: 7 },
   },
   {
     id: 'spaces',
@@ -79,7 +89,7 @@ export const capabilities: Capability[] = [
     mode: 'native',
     status: 'ready',
     actions: ['LIST_SPACES', 'CREATE_SPACE', 'ENTER_SPACE', 'LEAVE_SPACE', 'ADD_SPACE_MEMBER', 'REMOVE_SPACE_MEMBER', 'ADD_SPACE_RESOURCE', 'ARCHIVE_SPACE'],
-    navigation: { visible: true, order: 7 },
+    navigation: { visible: true, order: 8 },
   },
   {
     id: 'projections',
@@ -89,7 +99,7 @@ export const capabilities: Capability[] = [
     mode: 'native',
     status: 'ready',
     actions: ['LIST_PROJECTIONS', 'CREATE_PROJECTION', 'ENTER_PROJECTION', 'RETURN_TO_ROOT', 'SUSPEND_PROJECTION', 'RESUME_PROJECTION', 'ARCHIVE_PROJECTION', 'CREATE_CHECKPOINT', 'CREATE_MERGE_CANDIDATE'],
-    navigation: { visible: true, order: 8 },
+    navigation: { visible: true, order: 9 },
   },
   {
     id: 'capabilities',
@@ -99,7 +109,7 @@ export const capabilities: Capability[] = [
     mode: 'native',
     status: 'ready',
     actions: ['LIST_PROVIDERS', 'PROBE_PROVIDER', 'ENABLE_PROVIDER', 'DISABLE_PROVIDER', 'PREVIEW_DISPATCH', 'INVOKE_PROVIDER'],
-    navigation: { visible: true, order: 9 },
+    navigation: { visible: true, order: 10 },
   },
   {
     id: 'backup',
@@ -109,7 +119,7 @@ export const capabilities: Capability[] = [
     mode: 'native',
     status: 'ready',
     actions: ['EXPORT_STATE_BUNDLE', 'EXPORT_AUTHORITATIVE_STATE_BUNDLE', 'PREVIEW_STATE_RESTORE', 'PLAN_STATE_MIGRATION', 'APPLY_STATE_MIGRATION', 'RESTORE_STATE_BUNDLE'],
-    navigation: { visible: true, order: 10 },
+    navigation: { visible: true, order: 11 },
   },
   {
     id: 'mvp',
@@ -119,6 +129,6 @@ export const capabilities: Capability[] = [
     mode: 'native',
     status: 'ready',
     actions: ['LIST_MVP_JOURNEYS', 'START_MVP_JOURNEY', 'START_MVP_INTERACTION', 'COMPLETE_MVP_INTERACTION', 'PROMOTE_MVP_REFLECTION', 'FINISH_MVP_JOURNEY', 'ABANDON_MVP_JOURNEY', 'EVALUATE_MVP_JOURNEY'],
-    navigation: { visible: true, order: 11 },
+    navigation: { visible: true, order: 12 },
   },
 ]

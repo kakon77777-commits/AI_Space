@@ -29,7 +29,7 @@ function healthResponse(method: string): Response {
     'Cache-Control': 'no-store',
     'Content-Type': 'application/json; charset=utf-8',
   })
-  const body = method === 'HEAD' ? null : JSON.stringify({ ok: true, service: 'ai-space', version: '0.2.0' })
+  const body = method === 'HEAD' ? null : JSON.stringify({ ok: true, service: 'ai-space', version: '0.2.1' })
   return secure(new Response(body, { status: 200, headers }))
 }
 

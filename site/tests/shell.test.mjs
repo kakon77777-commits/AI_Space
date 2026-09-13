@@ -93,3 +93,12 @@ test('shipped capability registry exposes the state portability backup/restore r
     assert.equal(backup.actions.includes(action), true, `missing Backup action ${action}`)
   }
 })
+
+test('shipped capability registry exposes the persistent Activity surface', () => {
+  const activity = shippedCapabilities.find((item) => item.id === 'activities')
+  assert.ok(activity)
+  assert.equal(activity.route, '/activities')
+  assert.equal(activity.status, 'ready')
+  assert.ok(activity.actions.includes('START_ACTIVITY'))
+  assert.ok(activity.actions.includes('COMPLETE_ACTIVITY'))
+})

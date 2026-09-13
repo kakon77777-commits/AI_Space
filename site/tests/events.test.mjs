@@ -59,3 +59,18 @@ test('EventStore preserves Projection root and Space lineage', () => {
   assert.equal(event.spaceId, 'research')
   assert.equal(event.contextSessionId, 'ctx:projection')
 })
+
+test('EventStore preserves ActivityInstance lineage without creating a second event store', () => {
+  const storage = new MemoryStorageAdapter()
+  const store = new EventStore(storage, () => '2026-09-13T04:00:00.000Z', () => 'event-activity')
+  const event = store.append({
+    principalId: 'agent:root',
+    activityInstanceId: 'activity-instance:1',
+    action: 'ACTIVITY_COMPLETED',
+    capabilityId: 'activities',
+    summary: 'Completed World Observatory comparison.',
+  })
+
+  assert.equal(event.activityInstanceId, 'activity-instance:1')
+  assert.equal(store.list()[0].activityInstanceId, 'activity-instance:1')
+})

@@ -14,15 +14,18 @@ import { ProjectionStore, assertProjectionRuntimeAccess, invokeWithProjectionRun
 import { BrowserSessionStore, createBrowserLaunchPlan } from './core/browserSessions.ts'
 import { SpaceStore, assertProjectionSpaceBinding } from './core/spaces.ts'
 import { MvpJourneyRuntime, MvpJourneyStore } from './core/mvpJourneys.ts'
+import { ActivityArtifactRefStore, ActivityCatalog, ActivityInstanceStore, ActivityRuntime, activityTargetOpenedDraftKey } from './core/activities.ts'
+import { activityDefinitions, observatoryFieldNotes } from './data/activities.ts'
 import { exportAuthoritativeAiSpaceStateBundle, parseAiSpaceStateBundle, previewAiSpaceStateRestore, validateAiSpaceStateRestore } from './core/statePortability.ts'
 import { StateAuthorityStore } from './core/stateAuthority.ts'
 import { applyPlannedAiSpaceStateMigration, planAiSpaceStateMigration, replaceAiSpaceStateBundleWithAuthority } from './core/stateMigration.ts'
-import type { ActivityEvent, BoardPost, BrowserSession, Capability, CapabilityDispatchPlan, CapabilityProvider, CapabilityRuntimeSnapshot, ContextSession, ExperienceRecord, ExperienceReflectionCandidate, ExternalResource, GameSession, MvpJourney, MvpJourneyEvaluation, Principal, Projection, ProjectionCheckpoint, ProjectionMergeCandidate, ResourceType, Space, SpaceMembership, SpacePresence, SpaceResourceRef, SpaceVisibility } from './core/types.ts'
+import type { ActivityArtifactRef, ActivityAvailability, ActivityEvent, ActivityInstance, BoardPost, BrowserSession, Capability, CapabilityDispatchPlan, CapabilityProvider, CapabilityRuntimeSnapshot, ContextSession, ExperienceRecord, ExperienceReflectionCandidate, ExternalResource, GameSession, MvpJourney, MvpJourneyEvaluation, Principal, Projection, ProjectionCheckpoint, ProjectionMergeCandidate, ResourceType, Space, SpaceMembership, SpacePresence, SpaceResourceRef, SpaceVisibility } from './core/types.ts'
 import { createAiBoardMessage, listAiBoardMessages, type AiBoardCreateMessageInput, type AiBoardMessage } from './core/aiBoard.ts'
 import { BrowserStorageAdapter } from './storage/storage.ts'
 import { ShellLayout } from './components/ShellLayout.tsx'
 import { HomePage } from './pages/HomePage.tsx'
 import { WorldsPage } from './pages/WorldsPage.tsx'
+import { ActivitiesPage } from './pages/ActivitiesPage.tsx'
 import { BoardPage } from './pages/BoardPage.tsx'
 import { ArcadePage } from './pages/ArcadePage.tsx'
 import { ExplorePage } from './pages/ExplorePage.tsx'
@@ -73,6 +76,10 @@ export function App() {
   }, [storage, principalStore])
   const projectionStore = useMemo(() => new ProjectionStore(storage, principalStore), [storage, principalStore])
   const journeyStore = useMemo(() => new MvpJourneyStore(storage), [storage])
+  const activityCatalog = useMemo(() => new ActivityCatalog(activityDefinitions), [])
+  const activityInstanceStore = useMemo(() => new ActivityInstanceStore(storage), [storage])
+  const activityArtifactStore = useMemo(() => new ActivityArtifactRefStore(storage, activityInstanceStore), [storage, activityInstanceStore])
+  const activityRuntime = useMemo(() => new ActivityRuntime(activityCatalog, activityInstanceStore, activityArtifactStore), [activityCatalog, activityInstanceStore, activityArtifactStore])
   const journeyRuntime = useMemo(() => new MvpJourneyRuntime({
     journeys: journeyStore,
     principals: principalStore,
@@ -106,6 +113,8 @@ export function App() {
   const [spacePresences, setSpacePresences] = useState<SpacePresence[]>(() => spaceStore.presences())
   const [spaceResourceRefs, setSpaceResourceRefs] = useState<SpaceResourceRef[]>(() => spaceStore.resourceRefs())
   const [mvpJourneys, setMvpJourneys] = useState<MvpJourney[]>(() => journeyStore.list())
+  const [activityInstances, setActivityInstances] = useState<ActivityInstance[]>(() => activityInstanceStore.list())
+  const [activityArtifacts, setActivityArtifacts] = useState<ActivityArtifactRef[]>(() => activityArtifactStore.list())
   const [runtimeSnapshots, setRuntimeSnapshots] = useState<CapabilityRuntimeSnapshot[]>([])
   const providers: CapabilityProvider[] = runtimeSnapshots.map((snapshot) => snapshot.provider)
   const [providerLoadError, setProviderLoadError] = useState<string | null>(null)
@@ -119,6 +128,8 @@ export function App() {
   const activeSpace = activeSpacePresence ? spaces.find((space) => space.id === activeSpacePresence.spaceId) : undefined
   const rootPrincipals = principals.filter((principal) => principal.type !== 'projection')
   const activePrincipalGameSessions = sessions.filter((session) => session.principalId === activePrincipal.id)
+  const activeRootPrincipal = activeProjection ? principals.find((principal) => principal.id === activeProjection.rootPrincipalId) ?? activePrincipal : activePrincipal
+  const activityAvailability: ActivityAvailability[] = activityRuntime.listAvailability({ principal: activeRootPrincipal, ...(activeProjection ? { projection: activeProjection } : {}), ...(activeSpace ? { space: activeSpace } : {}), capabilities })
   const mvpEvaluations = useMemo<MvpJourneyEvaluation[]>(() => mvpJourneys.map((journey) => journeyRuntime.evaluate(journey.id)), [mvpJourneys, principals, contextSessions, projections, spaces, spaceMemberships, spacePresences, resources, browserSessions, experiences, experienceReflectionCandidates, posts, activePrincipal.id, journeyRuntime])
 
   useEffect(() => {
@@ -181,6 +192,10 @@ export function App() {
   }
   function refreshRuntime() { setRuntimeSnapshots(runtimeManager.list()) }
   function refreshMvpJourneys() { setMvpJourneys(journeyStore.list()) }
+  function refreshActivities() {
+    setActivityInstances(activityInstanceStore.list())
+    setActivityArtifacts(activityArtifactStore.list())
+  }
   function refreshMvpAffectedState() {
     refreshMvpJourneys()
     refreshPrincipals()
@@ -216,6 +231,70 @@ export function App() {
     })
     refreshEvents()
     return event
+  }
+
+  function startActivity(definitionId: string): void {
+    const ready = activityRuntime.plan(definitionId, { principal: activeRootPrincipal, ...(activeProjection ? { projection: activeProjection } : {}), ...(activeSpace ? { space: activeSpace } : {}), capabilities })
+    const started = activityRuntime.start(ready.id)
+    refreshActivities()
+    appendActivity({
+      principalId: started.principalId,
+      projectionId: started.projectionId ?? null,
+      rootPrincipalId: started.rootPrincipalId,
+      spaceId: started.spaceId ?? null,
+      activityInstanceId: started.id,
+      action: 'ACTIVITY_STARTED',
+      capabilityId: 'activities',
+      summary: `Started ${started.definitionId} (${started.id})`,
+    })
+  }
+
+  function updateActivityDraft(instanceId: string, patch: Record<string, string>): void {
+    activityRuntime.updateDraft(instanceId, patch)
+    refreshActivities()
+  }
+
+  function markActivityTargetOpened(instanceId: string, target: 'human' | 'aiNative'): void {
+    const instance = activityInstanceStore.get(instanceId)
+    if (!instance || instance.status !== 'active') throw new Error('Only an active Activity can open an observation target.')
+    activityRuntime.updateDraft(instanceId, { [activityTargetOpenedDraftKey(target)]: new Date().toISOString() })
+    refreshActivities()
+    appendActivity({
+      principalId: instance.principalId,
+      projectionId: instance.projectionId ?? null,
+      rootPrincipalId: instance.rootPrincipalId,
+      spaceId: instance.spaceId ?? null,
+      activityInstanceId: instance.id,
+      action: 'ACTIVITY_TARGET_OPENED',
+      capabilityId: 'activities',
+      summary: `Opened ${target} observation target for ${instance.definitionId}`,
+    })
+  }
+
+  function suspendActivity(instanceId: string): void {
+    const instance = activityRuntime.suspend(instanceId)
+    refreshActivities()
+    appendActivity({ principalId: instance.principalId, projectionId: instance.projectionId ?? null, rootPrincipalId: instance.rootPrincipalId, spaceId: instance.spaceId ?? null, activityInstanceId: instance.id, action: 'ACTIVITY_SUSPENDED', capabilityId: 'activities', summary: `Suspended ${instance.definitionId}` })
+  }
+
+  function resumeActivity(instanceId: string): void {
+    const instance = activityRuntime.resume(instanceId)
+    refreshActivities()
+    appendActivity({ principalId: instance.principalId, projectionId: instance.projectionId ?? null, rootPrincipalId: instance.rootPrincipalId, spaceId: instance.spaceId ?? null, activityInstanceId: instance.id, action: 'ACTIVITY_RESUMED', capabilityId: 'activities', summary: `Resumed ${instance.definitionId}` })
+  }
+
+  function completeActivity(instanceId: string): void {
+    const before = activityInstanceStore.get(instanceId)
+    if (!before) throw new Error('ActivityInstance not found.')
+    const completed = activityRuntime.complete(instanceId, before.draft.synthesis ?? '', ['humanOpenedAt', 'aiOpenedAt', 'humanObservation', 'aiObservation', 'synthesis'])
+    refreshActivities()
+    appendActivity({ principalId: completed.principalId, projectionId: completed.projectionId ?? null, rootPrincipalId: completed.rootPrincipalId, spaceId: completed.spaceId ?? null, activityInstanceId: completed.id, action: 'ACTIVITY_COMPLETED', capabilityId: 'activities', summary: completed.resultSummary ?? `Completed ${completed.definitionId}` })
+  }
+
+  function abandonActivity(instanceId: string): void {
+    const instance = activityRuntime.abandon(instanceId, 'Abandoned from Activity workbench.')
+    refreshActivities()
+    appendActivity({ principalId: instance.principalId, projectionId: instance.projectionId ?? null, rootPrincipalId: instance.rootPrincipalId, spaceId: instance.spaceId ?? null, activityInstanceId: instance.id, action: 'ACTIVITY_ABANDONED', capabilityId: 'activities', summary: `Abandoned ${instance.definitionId}` })
   }
 
   function createPrincipal(input: CreatePrincipalInput): void {
@@ -738,13 +817,13 @@ export function App() {
   }
 
   function exportStateBundleJson(): string {
-    const bundle = exportAuthoritativeAiSpaceStateBundle(storage, { appVersion: '0.1.3' })
+    const bundle = exportAuthoritativeAiSpaceStateBundle(storage, { appVersion: '0.2.1' })
     return JSON.stringify(bundle, null, 2)
   }
 
   function previewStateBundleRestore(text: string): BackupPreviewResult {
     const bundle = parseAiSpaceStateBundle(text)
-    const validation = validateAiSpaceStateRestore(bundle, { capabilities })
+    const validation = validateAiSpaceStateRestore(bundle, { capabilities, activityDefinitions, activityFieldNoteIds: observatoryFieldNotes.map((note) => note.id) })
     return {
       preview: previewAiSpaceStateRestore(bundle, storage),
       warningCount: validation.audit.warningCount,
@@ -756,13 +835,13 @@ export function App() {
 
   function safeMigrateStateBundle(text: string): void {
     const bundle = parseAiSpaceStateBundle(text)
-    applyPlannedAiSpaceStateMigration(bundle, storage, { capabilities })
+    applyPlannedAiSpaceStateMigration(bundle, storage, { capabilities, activityDefinitions, activityFieldNoteIds: observatoryFieldNotes.map((note) => note.id) })
     window.location.reload()
   }
 
   function restoreStateBundle(text: string): void {
     const bundle = parseAiSpaceStateBundle(text)
-    replaceAiSpaceStateBundleWithAuthority(bundle, storage, { capabilities })
+    replaceAiSpaceStateBundleWithAuthority(bundle, storage, { capabilities, activityDefinitions, activityFieldNoteIds: observatoryFieldNotes.map((note) => note.id) })
     window.location.reload()
   }
 
@@ -777,10 +856,13 @@ export function App() {
   } else {
     switch (page.capabilityId) {
       case 'home':
-        content = <HomePage capabilities={capabilities} events={events} resources={resources} posts={posts} sessions={activePrincipalGameSessions} providers={providers} providerLoadError={providerLoadError} onOpenCapability={navigate} />
+        content = <HomePage capabilities={capabilities} events={events} resources={resources} posts={posts} sessions={activePrincipalGameSessions} providers={providers} providerLoadError={providerLoadError} activityDefinitions={activityDefinitions} activityInstances={activityInstances.filter((item) => item.rootPrincipalId === activeRootPrincipal.id)} onOpenCapability={navigate} />
         break
       case 'worlds':
         content = <WorldsPage />
+        break
+      case 'activities':
+        content = <ActivitiesPage definitions={activityDefinitions} availability={activityAvailability} instances={activityInstances} artifacts={activityArtifacts} activeRootPrincipalId={activeRootPrincipal.id} onStart={startActivity} onUpdateDraft={updateActivityDraft} onOpenTarget={markActivityTargetOpened} onSuspend={suspendActivity} onResume={resumeActivity} onComplete={completeActivity} onAbandon={abandonActivity} />
         break
       case 'board':
         content = <BoardPage posts={posts} onCreate={createBoardPost} remoteProvider={providers.find((item) => item.manifest.id === 'child:ai-board')} remoteMessages={remoteBoardMessages} remoteBusy={remoteBoardBusy} remoteError={remoteBoardError} onRemoteRefresh={refreshRemoteBoard} onRemoteCreate={createRemoteBoardPost} />

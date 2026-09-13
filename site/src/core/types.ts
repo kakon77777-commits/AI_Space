@@ -128,6 +128,73 @@ export interface ExternalResource {
   createdAt: string
 }
 
+export type ActivityDomain = 'social' | 'research' | 'creative' | 'entertainment' | 'growth' | 'coordination'
+export type ActivityExecutionMode = 'native' | 'external' | 'capability'
+export type ActivityDefinitionStatus = 'ready' | 'draft' | 'retired'
+export type ActivityFeedEmission = 'none' | 'summary' | 'important-only'
+
+export interface ActivityPacingGuidance {
+  suggestedSteps: number
+  suggestedDurationMinutes?: number
+}
+
+export interface ActivityDefinition {
+  id: string
+  version: string
+  label: string
+  description: string
+  domain: ActivityDomain
+  executionMode: ActivityExecutionMode
+  requiredPermissions: string[]
+  requiresProjection: boolean
+  allowedSpaceIds: string[]
+  capabilityId?: string
+  pacing: ActivityPacingGuidance
+  status: ActivityDefinitionStatus
+  feedEmission: ActivityFeedEmission
+}
+
+export type ActivityInstanceStatus = 'planned' | 'ready' | 'active' | 'suspended' | 'completed' | 'abandoned' | 'failed'
+
+export interface ActivityInstance {
+  id: string
+  definitionId: string
+  definitionVersion: string
+  principalId: string
+  rootPrincipalId: string
+  projectionId?: string
+  spaceId?: string
+  status: ActivityInstanceStatus
+  draft: Record<string, string>
+  createdAt: string
+  updatedAt: string
+  readyAt?: string
+  startedAt?: string
+  suspendedAt?: string
+  completedAt?: string
+  abandonedAt?: string
+  failedAt?: string
+  resultSummary?: string
+  terminalReason?: string
+}
+
+export type ActivityArtifactType = 'board-post' | 'experience' | 'resource' | 'field-note'
+
+export interface ActivityArtifactRef {
+  id: string
+  activityInstanceId: string
+  artifactType: ActivityArtifactType
+  artifactId: string
+  principalId: string
+  createdAt: string
+}
+
+export interface ActivityAvailability {
+  definitionId: string
+  available: boolean
+  reasons: string[]
+}
+
 export interface ActivityEvent {
   id: string
   timestamp: string
@@ -140,6 +207,7 @@ export interface ActivityEvent {
   capabilityId?: string
   resourceId?: string
   sessionId?: string
+  activityInstanceId?: string
   summary: string
 }
 
@@ -368,7 +436,7 @@ export interface AiSpaceCleanupResult {
   removedResourceRefCount: number
 }
 
-export type AiSpaceStateBundleSchemaVersion = '1.0' | '1.1'
+export type AiSpaceStateBundleSchemaVersion = '1.0' | '1.1' | '1.2'
 export type AiSpaceStateChecksumAlgorithm = 'fnv1a32'
 
 export interface AiSpaceStateBundleAuthority {

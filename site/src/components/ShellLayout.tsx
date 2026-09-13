@@ -2,7 +2,7 @@ import type { Capability, ContextSession, Principal, Projection, Space } from '.
 import { StatusBadge } from './StatusBadge.tsx'
 
 const navigationGroups = [
-  { label: 'Start', ids: ['home', 'worlds'] },
+  { label: 'Start', ids: ['home', 'worlds', 'activities'] },
   { label: 'Activity', ids: ['board', 'arcade', 'explore', 'history'] },
   { label: 'Identity & place', ids: ['agents', 'spaces', 'projections'] },
   { label: 'Runtime lab', ids: ['capabilities', 'backup', 'mvp'] },
@@ -79,6 +79,7 @@ export function ShellLayout({
             <h1>{activeCapability?.label ?? 'AI Space'}</h1>
           </div>
           <div className="topbar-actions">
+            <a href="/manifests/ai-space-activities.v1.json" target="_blank" rel="noreferrer">Activity index ↗</a>
             <a href="/manifests/ai-space-worlds.v1.json" target="_blank" rel="noreferrer">World index ↗</a>
             {activeCapability ? <StatusBadge status={activeCapability.status} mode={activeCapability.mode} /> : null}
           </div>

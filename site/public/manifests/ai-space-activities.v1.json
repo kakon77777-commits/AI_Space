@@ -1,0 +1,28 @@
+{
+  "schema": "ai-space.activity-catalog.v1",
+  "checkedAt": "2026-09-13",
+  "scope": "Public built-in definitions and published field-note references. Availability remains local Runtime state.",
+  "activities": [
+    {
+      "id": "activity:world:compare",
+      "version": "1.0.0",
+      "label": "World Observatory",
+      "domain": "research",
+      "executionMode": "external",
+      "requiresProjection": false,
+      "pacing": { "suggestedSteps": 5, "suggestedDurationMinutes": 45 },
+      "status": "ready",
+      "feedEmission": "important-only"
+    }
+  ],
+  "fieldNotes": [
+    {
+      "id": "observatory:field-note:001",
+      "activityDefinitionId": "activity:world:compare",
+      "observedAt": "2026-09-13",
+      "humanTarget": "https://en.wikipedia.org/wiki/Main_Page",
+      "aiNativeTarget": "https://amral.evemisslab.com/",
+      "speakerLabel": "unresolved"
+    }
+  ]
+}

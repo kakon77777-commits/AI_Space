@@ -1,7 +1,7 @@
 import type { StorageAdapter } from '../storage/storage.ts'
 import { AI_SPACE_STATE_KEYS, restoreAiSpaceStateBundle, validateAiSpaceStateBundle } from './statePortability.ts'
 import { STATE_AUTHORITY_KEY, StateAuthorityStore } from './stateAuthority.ts'
-import type { AiSpaceStateMigrationApplyResult, AiSpaceStateMigrationPlan, Capability } from './types.ts'
+import type { ActivityDefinition, AiSpaceStateMigrationApplyResult, AiSpaceStateMigrationPlan, Capability } from './types.ts'
 
 function hasManagedState(storage: StorageAdapter): boolean {
   return AI_SPACE_STATE_KEYS.some((key) => storage.getItem(key) !== null)
@@ -9,16 +9,18 @@ function hasManagedState(storage: StorageAdapter): boolean {
 
 export function planAiSpaceStateMigration(input: unknown, target: StorageAdapter): AiSpaceStateMigrationPlan {
   const bundle = validateAiSpaceStateBundle(input)
-  if (bundle.schemaVersion === '1.0') {
+  if (bundle.schemaVersion !== '1.2') {
     return {
       relation: 'legacy',
       safeToApply: false,
-      reason: 'Schema 1.0 bundles have no authority lineage and require explicit replace restore.',
+      reason: bundle.schemaVersion === '1.0'
+        ? 'Schema 1.0 bundles have no authority lineage and require explicit replace restore.'
+        : 'Schema 1.1 bundles cannot carry Activity state and require explicit replace restore.',
     }
   }
 
   const candidate = bundle.authority
-  if (!candidate) throw new Error('Schema 1.1 bundle authority metadata is missing')
+  if (!candidate) throw new Error('Authoritative bundle metadata is missing')
   const local = new StateAuthorityStore(target).get()
   const candidateAuthority = {
     lineageId: candidate.lineageId,
@@ -104,6 +106,8 @@ export function planAiSpaceStateMigration(input: unknown, target: StorageAdapter
 
 export interface AiSpaceStateMigrationApplyOptions {
   capabilities: Capability[]
+  activityDefinitions?: ActivityDefinition[]
+  activityFieldNoteIds?: string[]
 }
 
 function captureMigrationState(storage: StorageAdapter): Record<string, string | null> {
@@ -129,11 +133,11 @@ export function applyPlannedAiSpaceStateMigration(
   const bundle = validateAiSpaceStateBundle(input)
   const plan = planAiSpaceStateMigration(bundle, target)
   if (!plan.safeToApply) throw new Error(`Migration relation ${plan.relation} is not safe to apply.`)
-  if (bundle.schemaVersion !== '1.1' || !bundle.authority) throw new Error('Safe migration requires an authoritative schema 1.1 bundle.')
+  if (bundle.schemaVersion !== '1.2' || !bundle.authority) throw new Error('Safe migration requires a schema 1.2 authoritative state bundle.')
 
   const before = captureMigrationState(target)
   try {
-    const restore = restoreAiSpaceStateBundle(bundle, target, { capabilities: options.capabilities })
+    const restore = restoreAiSpaceStateBundle(bundle, target, options)
     new StateAuthorityStore(target).set({
       schemaVersion: '1.0',
       lineageId: bundle.authority.lineageId,
@@ -157,9 +161,9 @@ export function replaceAiSpaceStateBundleWithAuthority(
   const bundle = validateAiSpaceStateBundle(input)
   const before = captureMigrationState(target)
   try {
-    const restore = restoreAiSpaceStateBundle(bundle, target, { capabilities: options.capabilities })
+    const restore = restoreAiSpaceStateBundle(bundle, target, options)
     const authorityStore = new StateAuthorityStore(target)
-    if (bundle.schemaVersion === '1.1' && bundle.authority) {
+    if (bundle.schemaVersion !== '1.0' && bundle.authority) {
       authorityStore.set({
         schemaVersion: '1.0',
         lineageId: bundle.authority.lineageId,

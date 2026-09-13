@@ -46,7 +46,7 @@ test('health endpoint is deterministic and does not invoke the asset binding', a
   assert.deepEqual(await response.json(), {
     ok: true,
     service: 'ai-space',
-    version: '0.2.0',
+    version: '0.2.1',
   })
   assert.equal(response.headers.get('cache-control'), 'no-store')
   assert.equal(assetCalls, 0)

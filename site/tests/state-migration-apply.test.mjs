@@ -87,7 +87,7 @@ test('authority commit failure rolls back restored domain state and authority me
   assert.equal(target.getItem('unrelated-key'), 'keep')
 })
 
-test('explicit authority-aware replace adopts v1.1 candidate lineage even when foreign', () => {
+test('explicit authority-aware replace adopts v1.2 candidate lineage even when foreign', () => {
   assert.equal(typeof migration.replaceAiSpaceStateBundleWithAuthority, 'function')
   const { rev1: localRev } = createRev1('lineage-local')
   const target = new MemoryStorageAdapter()

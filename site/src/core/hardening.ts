@@ -1,4 +1,7 @@
 import type {
+  ActivityArtifactRef,
+  ActivityDefinition,
+  ActivityInstance,
   AiSpaceAuditFinding,
   AiSpaceAuditReport,
   BoardPost,
@@ -17,6 +20,7 @@ import type {
   SpaceResourceRef,
 } from './types.ts'
 import { evaluateMvpJourney } from './mvpJourneys.ts'
+import { inspectActivityArtifacts, inspectActivityInstances } from './activities.ts'
 
 export interface AiSpaceAuditSources {
   principals: Principal[]
@@ -33,6 +37,10 @@ export interface AiSpaceAuditSources {
   reflectionCandidates: ExperienceReflectionCandidate[]
   posts: BoardPost[]
   journeys: MvpJourney[]
+  activityDefinitions?: ActivityDefinition[]
+  activityInstances?: unknown
+  activityArtifacts?: unknown
+  activityFieldNoteIds?: string[]
   activePrincipalId: string
 }
 
@@ -54,6 +62,16 @@ export function auditAiSpaceState(sources: AiSpaceAuditSources): AiSpaceAuditRep
   const browsers = new Map(sources.browserSessions.map((item) => [item.id, item]))
   const experiences = new Map(sources.experiences.map((item) => [item.id, item]))
   const posts = new Map(sources.posts.map((item) => [item.id, item]))
+  const activityInstanceInspection = inspectActivityInstances(sources.activityInstances === undefined ? [] : sources.activityInstances)
+  const activityArtifactInspection = inspectActivityArtifacts(sources.activityArtifacts === undefined ? [] : sources.activityArtifacts)
+  for (const finding of [...activityInstanceInspection.findings, ...activityArtifactInspection.findings]) {
+    error(finding.code, finding.entityType, finding.entityId, finding.detail)
+  }
+  const auditedActivityInstances = activityInstanceInspection.records
+  const auditedActivityArtifacts = activityArtifactInspection.records
+  const activityDefinitions = new Map((sources.activityDefinitions ?? []).map((item) => [item.id, item]))
+  const activityInstances = new Map(auditedActivityInstances.map((item) => [item.id, item]))
+  const activityFieldNoteIds = new Set(sources.activityFieldNoteIds ?? [])
   const memberships = new Set(sources.memberships.map((item) => `${item.spaceId}\u0000${item.principalId}`))
 
   if (!principals.has(sources.activePrincipalId)) {
@@ -157,6 +175,54 @@ export function auditAiSpaceState(sources: AiSpaceAuditSources): AiSpaceAuditRep
   for (const journey of sources.journeys) {
     const evaluation = evaluateMvpJourney(journey, sources)
     for (const detail of evaluation.errors) error('journey-incoherent', 'mvp-journey', journey.id, detail)
+  }
+
+  for (const activity of auditedActivityInstances) {
+    const definition = activityDefinitions.get(activity.definitionId)
+    const principal = principals.get(activity.principalId)
+    const root = principals.get(activity.rootPrincipalId)
+    const projection = activity.projectionId ? projections.get(activity.projectionId) : undefined
+
+    if (!definition) error('activity-definition-missing', 'activity-instance', activity.id, `ActivityDefinition ${activity.definitionId} is missing.`)
+    else {
+      if (definition.version !== activity.definitionVersion) warning('activity-definition-version-drift', 'activity-instance', activity.id, `Activity uses ${activity.definitionVersion}; catalog exposes ${definition.version}.`)
+      if (definition.requiresProjection && !activity.projectionId) error('activity-projection-required', 'activity-instance', activity.id, 'ActivityDefinition requires a Projection, but the instance has none.')
+      if (definition.allowedSpaceIds.length > 0 && (!activity.spaceId || !definition.allowedSpaceIds.includes(activity.spaceId))) {
+        error('activity-space-not-allowed', 'activity-instance', activity.id, 'Activity Space is outside the ActivityDefinition allowlist.')
+      }
+    }
+    if (!principal) error('activity-principal-missing', 'activity-instance', activity.id, `Principal ${activity.principalId} is missing.`)
+    if (!root || root.type === 'projection') error('activity-root-invalid', 'activity-instance', activity.id, `Root Principal ${activity.rootPrincipalId} is missing or is a Projection.`)
+    if (activity.spaceId && !spaces.has(activity.spaceId)) error('activity-space-missing', 'activity-instance', activity.id, `Space ${activity.spaceId} is missing.`)
+    if (activity.projectionId) {
+      if (!projection) error('activity-projection-missing', 'activity-instance', activity.id, `Projection ${activity.projectionId} is missing.`)
+      else if (projection.principalId !== activity.principalId || projection.rootPrincipalId !== activity.rootPrincipalId || projection.spaceId !== activity.spaceId) {
+        error('activity-projection-lineage-mismatch', 'activity-instance', activity.id, 'Activity lineage disagrees with its Projection.')
+      }
+    } else if (activity.principalId !== activity.rootPrincipalId) {
+      error('activity-root-lineage-mismatch', 'activity-instance', activity.id, 'Root-local Activity must use the Root Principal as its acting Principal.')
+    }
+    if (activity.status === 'active' && !activity.startedAt) error('activity-start-time-missing', 'activity-instance', activity.id, 'Active Activity has no startedAt timestamp.')
+    if (activity.status === 'completed' && (!activity.completedAt || !activity.resultSummary?.trim())) error('activity-completion-invalid', 'activity-instance', activity.id, 'Completed Activity lacks completion time or result summary.')
+    if (activity.status === 'abandoned' && (!activity.abandonedAt || !activity.terminalReason?.trim())) error('activity-abandonment-invalid', 'activity-instance', activity.id, 'Abandoned Activity lacks terminal evidence.')
+    if (activity.status === 'failed' && (!activity.failedAt || !activity.terminalReason?.trim())) error('activity-failure-invalid', 'activity-instance', activity.id, 'Failed Activity lacks terminal evidence.')
+  }
+
+  for (const artifact of auditedActivityArtifacts) {
+    const activity = activityInstances.get(artifact.activityInstanceId)
+    if (!activity) error('activity-artifact-instance-missing', 'activity-artifact-ref', artifact.id, `ActivityInstance ${artifact.activityInstanceId} is missing.`)
+    if (!principals.has(artifact.principalId)) error('activity-artifact-principal-missing', 'activity-artifact-ref', artifact.id, `Principal ${artifact.principalId} is missing.`)
+    else if (activity && activity.principalId !== artifact.principalId && activity.rootPrincipalId !== artifact.principalId) {
+      error('activity-artifact-principal-mismatch', 'activity-artifact-ref', artifact.id, 'Artifact Principal is outside the Activity lineage.')
+    }
+    const targetExists = artifact.artifactType === 'board-post'
+      ? posts.has(artifact.artifactId)
+      : artifact.artifactType === 'experience'
+        ? experiences.has(artifact.artifactId)
+        : artifact.artifactType === 'resource'
+          ? resources.has(artifact.artifactId)
+          : activityFieldNoteIds.has(artifact.artifactId)
+    if (!targetExists) error('activity-artifact-target-missing', 'activity-artifact-ref', artifact.id, `${artifact.artifactType} target ${artifact.artifactId} is missing.`)
   }
 
   return {

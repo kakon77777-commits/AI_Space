@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { MemoryStorageAdapter } from '../src/storage/storage.ts'
-import { exportAiSpaceStateBundle, exportAuthoritativeAiSpaceStateBundle } from '../src/core/statePortability.ts'
+import { exportAiSpaceStateBundle, exportAuthoritativeAiSpaceStateBundle, fnv1a32 } from '../src/core/statePortability.ts'
 import { StateAuthorityStore } from '../src/core/stateAuthority.ts'
 
 async function migrationModule() {
@@ -29,6 +29,21 @@ function firstCheckpoint(lineageId = 'lineage-A') {
   return { source, bundle }
 }
 
+function schema11Checkpoint() {
+  const legacy = exportAiSpaceStateBundle(new MemoryStorageAdapter(), {
+    appVersion: '0.1.3', createdAt: '2026-08-20T10:30:00.000Z',
+  })
+  const authority = {
+    lineageId: 'lineage-schema-11', revision: 1, parentChecksum: null,
+    stateFingerprint: fnv1a32(JSON.stringify(legacy.entries)),
+  }
+  const base = {
+    schemaVersion: '1.1', appVersion: legacy.appVersion, createdAt: legacy.createdAt,
+    checksumAlgorithm: 'fnv1a32', entries: legacy.entries, authority,
+  }
+  return { ...base, checksum: fnv1a32(JSON.stringify(base)) }
+}
+
 test('planner classifies legacy and bootstrap candidates', async () => {
   const { planAiSpaceStateMigration } = await migrationModule()
   const legacyStorage = new MemoryStorageAdapter()
@@ -36,6 +51,11 @@ test('planner classifies legacy and bootstrap candidates', async () => {
   const legacyPlan = planAiSpaceStateMigration(legacy, new MemoryStorageAdapter())
   assert.equal(legacyPlan.relation, 'legacy')
   assert.equal(legacyPlan.safeToApply, false)
+
+  const schema11Plan = planAiSpaceStateMigration(schema11Checkpoint(), new MemoryStorageAdapter())
+  assert.equal(schema11Plan.relation, 'legacy')
+  assert.equal(schema11Plan.safeToApply, false)
+  assert.match(schema11Plan.reason, /Activity state/i)
 
   const { bundle } = firstCheckpoint()
   const bootstrap = planAiSpaceStateMigration(bundle, new MemoryStorageAdapter())

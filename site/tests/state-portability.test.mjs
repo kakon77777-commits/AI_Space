@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 import { MemoryStorageAdapter } from '../src/storage/storage.ts'
 import {
   AI_SPACE_STATE_KEYS,
+  AI_SPACE_LEGACY_STATE_KEYS,
   exportAiSpaceStateBundle,
   parseAiSpaceStateBundle,
   validateAiSpaceStateBundle,
@@ -13,7 +14,8 @@ test('exportAiSpaceStateBundle captures only the exact AI Space allowlist in det
   storage.setItem('ai-space.principals.v1', '[{"id":"agent:root"}]')
   storage.setItem('unrelated.key', 'do-not-export')
   const bundle = exportAiSpaceStateBundle(storage, { appVersion: '0.1.2', createdAt: '2026-08-20T00:00:00.000Z' })
-  assert.deepEqual(Object.keys(bundle.entries), AI_SPACE_STATE_KEYS)
+  assert.deepEqual(Object.keys(bundle.entries), AI_SPACE_LEGACY_STATE_KEYS)
+  assert.equal(AI_SPACE_STATE_KEYS.length, AI_SPACE_LEGACY_STATE_KEYS.length + 2)
   assert.equal(bundle.entries['ai-space.principals.v1'], '[{"id":"agent:root"}]')
   assert.equal('unrelated.key' in bundle.entries, false)
   assert.equal(bundle.schemaVersion, '1.0')

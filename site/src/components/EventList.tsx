@@ -24,6 +24,7 @@ export function EventList({ events, emptyText = 'No activity yet.' }: { events: 
             {event.resourceId ? <code>res:{event.resourceId.slice(0, 8)}</code> : null}
             {event.contextSessionId ? <code>ctx:{event.contextSessionId.slice(0, 12)}</code> : null}
             {event.sessionId ? <code>session:{event.sessionId.slice(0, 8)}</code> : null}
+            {event.activityInstanceId ? <code>activity:{event.activityInstanceId.slice(0, 14)}</code> : null}
           </div>
         </article>
       ))}

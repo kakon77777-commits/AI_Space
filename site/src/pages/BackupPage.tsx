@@ -143,7 +143,7 @@ export function BackupPage({ onGetAuthority, onExport, onPreview, onSafeMigrate,
           ) : null}
           <div className="backup-restore-warning">
             <strong>Explicit replace escape hatch</strong>
-            <p>This ignores migration ancestry and replaces/clears the fixed AI Space domain-state allowlist after staged audit. v1.1 adopts the candidate lineage; legacy v1.0 clears local authority. Use only when replacement is intentional.</p>
+            <p>This ignores migration ancestry and replaces/clears the fixed AI Space domain-state allowlist after staged audit. Authoritative v1.1/v1.2 bundles adopt the candidate lineage; legacy v1.0 clears local authority. Use only when replacement is intentional.</p>
             <button className="danger-lite" onClick={restore}>Force replace AI Space state & reload</button>
           </div>
         </div>

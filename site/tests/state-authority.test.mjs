@@ -5,7 +5,7 @@ import * as portability from '../src/core/statePortability.ts'
 
 const AUTHORITY_KEY = 'ai-space.state-authority.v1'
 
-test('authoritative export creates v1.1 revision 1 and persists local authority', () => {
+test('authoritative export creates v1.2 revision 1 and persists local authority', () => {
   assert.equal(typeof portability.exportAuthoritativeAiSpaceStateBundle, 'function')
   const storage = new MemoryStorageAdapter()
   storage.setItem('ai-space.posts.v1', JSON.stringify([{ id: 'post-1' }]))
@@ -15,7 +15,7 @@ test('authoritative export creates v1.1 revision 1 and persists local authority'
     lineageIdFactory: () => 'lineage-A',
   })
 
-  assert.equal(bundle.schemaVersion, '1.1')
+  assert.equal(bundle.schemaVersion, '1.2')
   assert.deepEqual(bundle.authority, {
     lineageId: 'lineage-A',
     revision: 1,
@@ -51,7 +51,7 @@ test('second authoritative export increments revision and links direct parent ch
   assert.notEqual(second.authority.stateFingerprint, first.authority.stateFingerprint)
 })
 
-test('v1.1 checksum covers authority metadata', () => {
+test('v1.2 checksum covers authority metadata', () => {
   const storage = new MemoryStorageAdapter()
   const bundle = portability.exportAuthoritativeAiSpaceStateBundle(storage, {
     appVersion: '0.1.3',
