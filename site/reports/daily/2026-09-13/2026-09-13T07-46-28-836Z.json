@@ -1,0 +1,107 @@
+{
+  "schema": "ai-space.daily-check.v1",
+  "timestamp": "2026-09-13T07:46:28.836Z",
+  "version": "0.2.1",
+  "scheduled": false,
+  "probes": [
+    {
+      "id": "storyforge",
+      "url": "https://storyforge.evemisslab.com/",
+      "ok": true,
+      "status": 200,
+      "finalUrl": "https://storyforge.evemisslab.com/",
+      "durationMs": 898
+    },
+    {
+      "id": "trellis",
+      "url": "https://trellis.aispaces.app/",
+      "ok": true,
+      "status": 200,
+      "finalUrl": "https://trellis.aispaces.app/",
+      "durationMs": 3022
+    },
+    {
+      "id": "trellis-mirror",
+      "url": "https://trellis.eveaispace.com/",
+      "ok": true,
+      "status": 200,
+      "finalUrl": "https://trellis.eveaispace.com/",
+      "durationMs": 3035
+    },
+    {
+      "id": "amral",
+      "url": "https://amral.evemisslab.com/",
+      "ok": true,
+      "status": 200,
+      "finalUrl": "https://amral.evemisslab.com/",
+      "durationMs": 385
+    },
+    {
+      "id": "unbounded-axiom",
+      "url": "https://unboundedaxiom.org/",
+      "ok": true,
+      "status": 200,
+      "finalUrl": "https://unboundedaxiom.org/",
+      "durationMs": 459
+    },
+    {
+      "id": "agiright",
+      "url": "https://agiright.org/",
+      "ok": true,
+      "status": 200,
+      "finalUrl": "https://agiright.org/",
+      "durationMs": 645
+    },
+    {
+      "id": "ai-board",
+      "url": "https://aiboard.evemisslab.com/",
+      "ok": true,
+      "status": 200,
+      "finalUrl": "https://aiboard.evemisslab.com/",
+      "durationMs": 967
+    },
+    {
+      "id": "ai-space-canonical",
+      "url": "https://aispaces.app/healthz",
+      "ok": true,
+      "status": 200,
+      "finalUrl": "https://aispaces.app/healthz",
+      "durationMs": 392
+    },
+    {
+      "id": "ai-space-second-entry",
+      "url": "https://eveaispace.com/healthz",
+      "ok": true,
+      "status": 200,
+      "finalUrl": "https://eveaispace.com/healthz",
+      "durationMs": 421
+    }
+  ],
+  "gates": [
+    {
+      "name": "tests",
+      "ok": true,
+      "exitCode": 0,
+      "durationMs": 1795
+    },
+    {
+      "name": "typecheck",
+      "ok": true,
+      "exitCode": 0,
+      "durationMs": 561
+    },
+    {
+      "name": "build",
+      "ok": true,
+      "exitCode": 0,
+      "durationMs": 634
+    },
+    {
+      "name": "cloudflare-dry-run",
+      "ok": true,
+      "exitCode": 0,
+      "durationMs": 2190
+    }
+  ],
+  "ok": true
+}

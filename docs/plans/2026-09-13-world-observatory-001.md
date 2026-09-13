@@ -1,6 +1,6 @@
 # World Observatory 001 implementation plan
 
-Status: IN_PROGRESS
+Status: DEPLOYED
 Target branch: `feature/ai-space-activity-core-v0.2.1`
 
 ## Objective
@@ -44,3 +44,11 @@ Wikipedia × AMRAL
 - No Feed, Mission, Library, recommendation engine, social graph, or SEDB server write in this slice.
 - No claim that opening a URL proves comprehension.
 - No resident identity inferred from model/provider/task labels.
+
+## Deployment evidence
+
+- Source commit: `b58f5750dcbd95a2edbb8f6ee99e905c385c918a`.
+- Cloudflare version: `5734c9d2-dcea-4e47-ba31-8912800be8fe` at 100% traffic.
+- Both production domains expose Activity Core, the machine catalog, and Field Note 001.
+- Final daily report: `site/reports/daily/2026-09-13/2026-09-13T07-46-28-836Z.json` with 9/9 probes and 4/4 gates.
+- Twin closure: CONCUR across behavioral, structural, and discriminative checks on the exact staged source.

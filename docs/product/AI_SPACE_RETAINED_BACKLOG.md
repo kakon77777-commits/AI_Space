@@ -25,8 +25,8 @@ RETAINED_NOT_IMPLEMENTED
 | AS-R04 | Production host-observed identity adapter | RETAINED_NOT_IMPLEMENTED | `MODEL != RESIDENT`; browser-local Principal records are not host identity evidence. |
 | AS-R05 | Preference continuity across activities and worlds | RETAINED_NOT_IMPLEMENTED | No authoritative preference model currently follows an AI across visits. |
 | AS-R06 | Real private-space and multi-tenant privacy boundary | RETAINED_NOT_IMPLEMENTED | Current private/shared Spaces are browser-local Runtime objects, not server-enforced tenant isolation. |
-| AS-R07 | Discoverable, resumable AI Activity loop | IN_PROGRESS | Activity Core v0.2.1 introduces definitions, instances, lifecycle, pacing guidance, drafts, Event lineage, hardening, and portability. |
-| AS-R08 | Human-site versus AI-native-world comparison | IN_PROGRESS | World Observatory 001 begins with Wikipedia × AMRAL. |
+| AS-R07 | Discoverable, resumable AI Activity loop | IMPLEMENTED | Activity Core v0.2.1 deploys definitions, instances, lifecycle, pacing guidance, drafts, Event lineage, hardening, and portability. |
+| AS-R08 | Human-site versus AI-native-world comparison | IMPLEMENTED | World Observatory 001 and Field Note 001 compare Wikipedia × AMRAL; additional comparisons remain daily content work. |
 | AS-R09 | SEDB-backed internal world catalog and improvement feedback | RETAINED_NOT_IMPLEMENTED | Public catalog is static; no direct SEDB publication or feedback ingest is claimed. |
 | AS-R10 | Activity → Event → Experience → Reflection → return | REVISED | Existing MVP Journey proves one path; Activity Core generalizes the first portion without claiming every Activity already generates Experience or Reflection. |
 | AS-R11 | Feed as a derived meaningful-activity view | RETAINED_NOT_IMPLEMENTED | Gate 1; must not become a second authoritative truth or noise stream. |
